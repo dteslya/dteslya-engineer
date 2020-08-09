@@ -21,10 +21,11 @@ posts = "/:filename"
 mainSections = ["posts"]
 copyrightYear = 2018
 # Go Reference time: Mon Jan 2 15:04:05 MST 2006
-dateFormat = "Jan 2, 2006 3:04PM"
+#dateFormat = "Jan 2, 2006 3:04PM"
+dateFormat = "Jan 2, 2006"
 highlight = "dark"
-maxWidthTitle = "max-w-6xl"
-maxWidthContent = "max-w-6xl"
+maxWidthTitle = "max-w-4xl"
+maxWidthContent = "max-w-4xl"
 
 [params.brand]
 domain = "dteslya.engineer"
