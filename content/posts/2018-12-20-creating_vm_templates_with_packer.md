@@ -15,7 +15,7 @@ author: "dteslya"
 toc: true
 maxWidthTitle: "max-w-4xl"
 maxWidthContent: "max-w-4xl"
-feature: "images/logo-hashicorp.svg"
+# feature: "images/logo-hashicorp.svg"
 ---
 In this series of posts I'd like to show how to automate the process of setting up virtual infrastructure consisting of several Windows Server 2016 machines. Most articles I've come across cover the use of cloud providers (e.g. AWS) as a virtualization platform, so I decided to make a write up about my experience with VMware vSphere.
 The whole process can be devided in three stages:
