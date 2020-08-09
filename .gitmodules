@@ -1,15 +1,4 @@
-[submodule "themes/soho"]
-	path = themes/soho
-	url = https://github.com/alexandrevicenzi/soho.git
-[submodule "themes/anatole"]
-	path = themes/anatole
-	url = https://github.com/lxndrblz/anatole.git
-[submodule "themes/hugo-clarity"]
-	path = themes/hugo-clarity
-	url = https://github.com/chipzoller/hugo-clarity
 [submodule "themes/axiom"]
 	path = themes/axiom
 	url = https://github.com/marketempower/axiom.git
-[submodule "themes/bento"]
-	path = themes/bento
-	url = https://github.com/leonardofaria/bento.git
+
