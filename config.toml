@@ -43,7 +43,7 @@ twitter = "https://twitter.com/grimward"
 footer = ["twitter", "facebook", "github", "linkedin", "instagram"]
 
 [params.services]
-googleAnalyticsId = "UA-160259978-2"
+googleAnalyticsId = "UA-131564955-1"
 googleTagManagerId = ""
 googleAdsId = ""
 googleAdsenseId = ""
@@ -53,7 +53,7 @@ googleAdsConversionId = ""
 googleAdsConversionValue = 0
 facebookApp = ""
 facebookPixel = ""
-disqusShortname = ""
+disqusShortname = "dteslya"
 
 # [params.logo]
 # inline = true
