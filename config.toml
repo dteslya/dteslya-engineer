@@ -40,7 +40,7 @@ linkedin = "https://www.linkedin.com/in/dteslya"
 #stackoverflow = "https://stackoverflow.com/users/user"
 twitter = "https://twitter.com/grimward"
 #youtube = "https://www.youtube.com/user"
-footer = ["twitter", "github", "linkedin", "instagram"]
+footer = ["twitter", "facebook", "github", "linkedin", "instagram"]
 
 [params.services]
 googleAnalyticsId = "UA-160259978-2"
