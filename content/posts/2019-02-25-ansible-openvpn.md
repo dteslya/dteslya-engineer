@@ -10,6 +10,10 @@ tags:
   - mikrotik
 date: "2019-02-25"
 toc: true
+aliases:
+    - /automation/2019-02-25-ansible-openvpn/
+maxWidthTitle: "max-w-4xl"
+maxWidthContent: "max-w-4xl"
 ---
 Recently I’ve been tasked to come up with a VPN solution which must support:
 - All major desktop and mobile OSes as clients
