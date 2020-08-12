@@ -17,7 +17,7 @@ aliases:
     - /automation/2018-12-20-creating_vm_templates_with_packer/
 maxWidthTitle: "max-w-4xl"
 maxWidthContent: "max-w-4xl"
-# feature: "images/logo-hashicorp.svg"
+feature: "images/packer_terraform_feature_1.png"
 ---
 In this series of posts I'd like to show how to automate the process of setting up virtual infrastructure consisting of several Windows Server 2016 machines. Most articles I've come across cover the use of cloud providers (e.g. AWS) as a virtualization platform, so I decided to make a write up about my experience with VMware vSphere.
 The whole process can be devided in three stages:

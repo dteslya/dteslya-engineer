@@ -16,6 +16,7 @@ aliases:
     - /automation/2019-02-19-configuring_vms_with_ansible/
 maxWidthTitle: "max-w-4xl"
 maxWidthContent: "max-w-4xl"
+feature: "images/packer_terraform_feature_3.png"
 ---
 This is the final entry in the series. In this post, I want to show how Ansible can be used to automate Windows VM provisioning. As always all the scripts and configurations are available at my [GitHub repository](https://github.com/dteslya/win-iac-lab).
 

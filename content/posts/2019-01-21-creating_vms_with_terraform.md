@@ -16,6 +16,7 @@ aliases:
     - /automation/2019-01-21-creating_vms_with_terraform/
 maxWidthTitle: "max-w-4xl"
 maxWidthContent: "max-w-4xl"
+feature: "images/packer_terraform_feature_2.png"
 ---
 In the [first entry]({{< ref 2018-12-20-creating_vm_templates_with_packer.md >}}) of this series I showed how to create VM templates using Packer. Now we can use those templates to spin up actual VMs with help of Terraform.
 
