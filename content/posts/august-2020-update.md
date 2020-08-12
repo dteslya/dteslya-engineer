@@ -10,6 +10,7 @@ date: "2020-08-11"
 toc: false
 maxWidthTitle: "max-w-4xl"
 maxWidthContent: "max-w-4xl"
+feature: "images/2020_aug_update.png"
 ---
 It's been a while since my last post and I want to shed some light on what I've been up to and what are my plans for the future of this site.
 A lot of things happened in 2019 and 2020 in my professional life and the two most important ones were changing job and becoming a CCIE R&S this February (just before the lockdown).
