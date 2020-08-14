@@ -10,8 +10,7 @@ tags:
   - mikrotik
 date: "2019-02-25"
 toc: true
-aliases:
-    - /automation/2019-02-25-ansible-openvpn/
+url: automation/2019-02-25-ansible-openvpn/
 feature: "images/openvpn_ansible.png"
 maxWidthTitle: "max-w-4xl"
 maxWidthContent: "max-w-4xl"

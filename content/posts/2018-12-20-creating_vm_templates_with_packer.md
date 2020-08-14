@@ -13,8 +13,7 @@ tags:
 date: "2018-12-20"
 author: "dteslya"
 toc: true
-aliases:
-    - /automation/2018-12-20-creating_vm_templates_with_packer/
+url: automation/2018-12-20-creating_vm_templates_with_packer/
 maxWidthTitle: "max-w-4xl"
 maxWidthContent: "max-w-4xl"
 feature: "images/packer_terraform_feature_1.png"

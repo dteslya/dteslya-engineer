@@ -12,8 +12,7 @@ tags:
   - windows
 date: "2019-01-21"
 toc: true
-aliases:
-    - /automation/2019-01-21-creating_vms_with_terraform/
+url: automation/2019-01-21-creating_vms_with_terraform/
 maxWidthTitle: "max-w-4xl"
 maxWidthContent: "max-w-4xl"
 feature: "images/packer_terraform_feature_2.png"

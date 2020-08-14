@@ -12,8 +12,7 @@ tags:
   - windows
 date: "2019-02-19"
 toc: true
-aliases:
-    - /automation/2019-02-19-configuring_vms_with_ansible/
+url: automation/2019-02-19-configuring_vms_with_ansible/
 maxWidthTitle: "max-w-4xl"
 maxWidthContent: "max-w-4xl"
 feature: "images/packer_terraform_feature_3.png"
