@@ -124,8 +124,12 @@ attribute = false
 codeFences = true
 noClasses = false
 tabWidth = 2
-lineNos = true
+lineNos = false
 # lineNumbersInTable = false
+  [markup.tableOfContents]
+    endLevel = 3
+    ordered = true
+    startLevel = 1
 
 [menu]
 [[menu.main]]
