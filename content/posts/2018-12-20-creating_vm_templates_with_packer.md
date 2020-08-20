@@ -36,7 +36,7 @@ As stated on the official [Packer](https://www.packer.io/intro/index.html) page
 Packer uses builder plugins to actually build images. There are two builders for VMware available out of the box: `vmware-iso` and `vmware-vmx`. The latter uses existing VMs to create images, so it doesn't fit in my concept of building everything from scratch.
 `vmware-iso` however starts from ISO file and creates brand new VM. But to use `vmware-iso` builder remotely on VMware vSphere hypervisor you need to modify your ESXi host to allow SSH access, because `vmware-iso` uses SSH instead of API to talk to VMware hypervisor. Looks pretty much like a dirty hack to me, not to mention that I don't have enough privileges to make such modifications to ESXi hosts in my environment.
 
-Fortunately there is a third-party builder by [JetBrains](https://github.com/jetbrains-infra) called `vsphere-iso` which does pretty much the same as `vmware-iso` but using vCenter API instead of SSH (they also have a `vshpere-clone` builder as a `vmware-vmx` alternative).
+Fortunately there is a third-party builder by [JetBrains](https://github.com/jetbrains-infra) called `vsphere-iso` which does pretty much the same as `vmware-iso` but using vCenter API instead of SSH (they also have a `vsphere-clone` builder as a `vmware-vmx` alternative).
 
 ### Setting up Packer
 First you need to install Packer on your workstation. I use Ubuntu, but the installation process is fairly similar on all supported OSes. There are no packages of Packer for Ubuntu, but it can be installed as a precompiled binary very easily.
