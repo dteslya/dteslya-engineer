@@ -1,0 +1,7 @@
+disqus_id: 4645802421
+_id: f7184eb4-e2f5-11ea-8a86-acde48001122
+name: tahar
+email: b9459fdd374d3017de0044ba9404db54
+reply_to: f7185b66-e2f5-11ea-8a86-acde48001122
+comment: "<p>The problem seems with winrm the service doesn't start and I have this error <br>2019/10/09 13:05:41 packer-builder-vsphere-iso.linux: 2019/10/09 13:05:41 [INFO] Attempting WinRM connection...<br>2019/10/09 13:05:41 packer-builder-vsphere-iso.linux: 2019/10/09 13:05:41 [DEBUG] connecting to remote shell using WinRM<br>2019/10/09 13:05:41 packer-builder-vsphere-iso.linux: 2019/10/09 13:05:41 [ERROR] connection error: http response error: 401 - invalid content type<br>2019/10/09 13:05:41 packer-builder-vsphere-iso.linux: 2019/10/09 13:05:41 [ERROR] WinRM connection err: http response error: 401 - invalid content type</p><p>So I can't continue with my building, after canceling the VM is destroyed which is normal any idea ?</p><p>Thank you</p>"
+date: "2019-10-09T12:08:38"

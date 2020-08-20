@@ -1,0 +1,7 @@
+disqus_id: 4499921123
+_id: f718b32c-e2f5-11ea-8a86-acde48001122
+name: Dwayne Hall
+email: 90d4342b39d908b23f81d969eef4a8a3
+reply_to: ''
+comment: "<p>Dmitry - excellent series of articles - I must admit it is the first time using Packer but I got it working to a degree.  After the the vmware tools silently installs and the VM comes to its first login screen it stops.  I discovered that even though the VMware tools looks to be installed it isn't reporting back the IP to vSphere and therefore Packer isn't continuing by shutting the VM down and converting it to a template.  If I go into control panel and select change and repair on VMware tools then go back to packer it continues.  I have vCenter 6.7 (6.7.0.21000) with vSphere 6.5 (VMware ESXi, 6.5.0, 11925212).  I have tried modifying the vmtools.cmd to change /qb to /qn with the same results.  Any ideas - I have been searching but haven't found any suggestions as yet.</p><p>Thanks<br>Dwayne</p>"
+date: "2019-06-12T20:40:43"
