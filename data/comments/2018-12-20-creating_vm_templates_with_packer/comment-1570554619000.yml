@@ -1,0 +1,7 @@
+disqus_id: 4645124502
+_id: f7185b66-e2f5-11ea-8a86-acde48001122
+name: tahar
+email: b9459fdd374d3017de0044ba9404db54
+reply_to: f718676e-e2f5-11ea-8a86-acde48001122
+comment: "<p>It's ok it was an error on my config I miss configured the path to the vmware-tools-iso, now I am facing wainting for winrm to become available is having an IP and being connected to network mandatory ? I have no provisionner I would just install the system and then convert it to template. Terraform and ansible will handle the rest</p>"
+date: "2019-10-08T20:10:19"

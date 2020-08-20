@@ -53,7 +53,13 @@ googleAdsConversionId = ""
 googleAdsConversionValue = 0
 facebookApp = ""
 facebookPixel = ""
-disqusShortname = "dteslya"
+#disqusShortname = "dteslya"
+
+[params.staticman]
+  endpoint = "https://dteslya-engineer-staticman.herokuapp.com/v2/entry"
+  username = "dteslya"
+  repository = "dteslya-engineer"
+  branch = "master"
 
 # [params.logo]
 # inline = true
