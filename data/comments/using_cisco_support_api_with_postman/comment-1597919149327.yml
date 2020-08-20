@@ -1,0 +1,6 @@
+_id: 840d8e50-e2cf-11ea-8ec7-5dd4ff3aae89
+name: John Doe
+email: fa0b917cf6e17fedd059c21720428cbb
+reply_to: ''
+comment: "Syntax highlighting test\r\n\r\n```javascript\r\nfunction changeValue(elementName, newValue){\r\n    document.getElementsByName(elementName)[0].value=newValue;\r\n    window.location.hash = \"#comment-form\";\r\n  };\r\n```"
+date: '2020-08-20T10:25:49.305Z'
