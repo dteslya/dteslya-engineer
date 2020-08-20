@@ -1,0 +1,9 @@
+_id: 5d7c98a0-e2eb-11ea-8367-c996a7ff2a7b
+name: test
+email: 655f1353b19f4254b1c3c609ad1f3770
+reply_to: ''
+comment: >-
+  getTime() always uses UTC for `time` representation. For example, a client
+  browser in one timezone, getTime() will be the same as a client browser in any
+  other timezone.
+date: '2020-08-20T13:45:10.424Z'
