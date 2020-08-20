@@ -59,7 +59,7 @@ facebookPixel = ""
   endpoint = "https://dteslya-engineer-staticman.herokuapp.com/v2/entry"
   username = "dteslya"
   repository = "dteslya-engineer"
-  branch = "staticman"
+  branch = "master"
 
 # [params.logo]
 # inline = true
