@@ -37,6 +37,15 @@ Unfortunately, it doesn't work and now I'm waiting for the support team to help 
 I suspect that it doesn't recognize `.engineer` as a valid TLD.
 I hope this will be resolved soon.
 
+**⚡ UPDATE**  
+Disqus support turned out to be useless (they simply never responded), so I migrated my commenting system to [Staticman](https://staticman.net/). I spent a couple of days integrating it with my blog and importing existing comments from Disqus but it was totally worth it. Now all the comments are stored as `yaml` files in blog repo.
+
+I used these guides to complete my migration:  
+[Running Staticman on Hugo Blog With Nested Comments](https://yasoob.me/posts/running_staticman_on_static_hugo_blog_with_nested_comments/)  
+[HUGO + STATICMAN: NESTED REPLIES AND E-MAIL NOTIFICATIONS](https://dancwilliams.com/hugo-staticman-nested-replies-and-email-notifications/)
+
+The next step is to add Captcha and Email notifications to comments.
+
 # Plans
 My focus for the last half-year was learning Python by developing a web app for our team.
 Its main purpose is to take putty session logs from network devices as an input and produce structured reports in xlsx format.
