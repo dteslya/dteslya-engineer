@@ -28,18 +28,34 @@ feature: "images/2020-08-network_automation.png"
   - [Summary](#summary)
 - [NetDevOps](#netdevops)
 - [Tools and technologies](#tools-and-technologies)
+  - [Ways of interacting with network devices programmatically](#ways-of-interacting-with-network-devices-programmatically)
+    - [CLI](#cli)
+      - [Netmiko](#netmiko)
+      - [Scrapli](#scrapli)
+      - [TextFSM and NTC Templates](#textfsm-and-ntc-templates)
+      - [TTP (Template Text Parser)](#ttp-template-text-parser)
+      - [PyATS & Genie](#pyats--genie)
+    - [API](#api)
   - [Docker and containers](#docker-and-containers)
-  - [Ways of interacting with network devices](#ways-of-interacting-with-network-devices)
-  - [Monitoring](#monitoring)
-  - [Testing and modeling tools](#testing-and-modeling-tools)
+    - [Why use Docker?](#why-use-docker)
+    - [Basic Terminology](#basic-terminology)
+      - [Images](#images)
+      - [Layers](#layers)
+      - [Tags](#tags)
+      - [Volumes](#volumes)
+      - [Dockerfiles](#dockerfiles)
+      - [Docker Compose](#docker-compose)
+    - [Docker use cases for network automation](#docker-use-cases-for-network-automation)
   - [Automation tools](#automation-tools)
     - [Paramiko, netmiko](#paramiko-netmiko)
     - [NAPALM](#napalm)
     - [Ansible (framework)](#ansible-framework)
     - [Chef, Puppet, Salt (honorable mentions)](#chef-puppet-salt-honorable-mentions)
     - [Nornir](#nornir)
-    - [Scrapli](#scrapli)
-    - [PyATS & Genie](#pyats--genie)
+    - [Scrapli](#scrapli-1)
+    - [PyATS & Genie](#pyats--genie-1)
+  - [Monitoring](#monitoring)
+  - [Testing and modeling tools](#testing-and-modeling-tools)
   - [Code editors](#code-editors)
   - [Data formats](#data-formats)
     - [JSON](#json)
@@ -117,7 +133,7 @@ The workflow starts with a network operator introducing a change (1) either to t
 
 **Source of Truth** is a database (e.g. SQL DB or plain text files) where constants such as VLAN numbers and IP addresses are stored. Actually this can be a number of databases &mdash; you can get your IP information from [IPAM](https://en.wikipedia.org/wiki/IP_address_management) and interface descriptions from [DCIM](https://en.wikipedia.org/wiki/Data_center_management#Data_center_infrastructure_management) ([Netbox](https://netbox.readthedocs.io/en/stable/) is a great example that can do both). The key idea here is that each database must be the [single source of truth](https://en.wikipedia.org/wiki/Single_source_of_truth) for the particular piece of information, so when you need to change something you change it only in one place.
 
-**Configuration templates** are just text files written in a templating language of choice (I guess [Jinja](https://jinja.palletsprojects.com/en/2.11.x/) is the most popular one). When combined with the info from the SoT they produce device-specific config files. Templating allows you to break down device configurations into separate template files each one representing specific config section and then mix and match them to produce configurations for different network devices. Some templates may be reused across multiple devices and some may be created for specific software version or vendor.
+**Configuration templates** are just text files written in a templating language of choice (I guess [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) is the most popular one). When combined with the info from the SoT they produce device-specific config files. Templating allows you to break down device configurations into separate template files each one representing specific config section and then mix and match them to produce configurations for different network devices. Some templates may be reused across multiple devices and some may be created for specific software version or vendor.
 
 Making changes to the SoT or the templates triggers (2) the rest of the process. First, both those sources of information are used by the configuration management system (e.g. Ansible, more on this later) to generate the resulting configuration files to be applied to the network devices. These configs then must be validated (3). Validation usually includes a number of automated tests (syntax check, use of modeling software, spinning up virtual devices) and a peer review. If validation fails some form of feedback is given to the initiator of change (4) so they can remediate and start the whole process again. If validation is passed resulting configs can be deployed to the production network (5).
 
@@ -128,6 +144,43 @@ In the next section I'm going to look at the tools and technologies one can util
 # Tools and technologies
 This section is quite opinionated and aims to introduce you to the essential tools leaving behind many others for the sake of brevity. I highly recommend to take a look at the [Awesome Network Automation](https://github.com/networktocode/awesome-network-automation) list later.
 
+## Ways of interacting with network devices programmatically
+There are two major ways of accessing network devices programmatically: CLI and API.
+### CLI
+For a long time the only API of network devices was CLI which is designed to be used by humans and not automation scripts. These are the main drawbacks of using CLI as an API:
+* **Inconsistent data output**  
+  Same command outputs may differ from one NOS (Network Operating System) version to another.
+* **Unstructured data output**  
+  Data returned by command execution in CLI is plain text, which means you have to manually parse it (i.e. CLI scraping)
+* **Unreliable command execution**  
+  You don't get a status code of an executed command and have to parse the output to determine whether the command succeeded or failed.
+
+Despite more and more networking vendors begin to include API support in their products it's unlikely that you won't have to deal with CLI during your network automation journey.
+
+Fortunately there are a lot of tools and libraries today that make CLI scraping easier. Here is a list of the most prominent ones.
+#### Netmiko  
+[Netmiko](https://github.com/ktbyers/netmiko) is a python library based on [paramiko](http://www.paramiko.org/) and aimed to simplify SSH access to network devices. Created by Kirk Byers in 2014 this python library stays the most popular and widely used tool for managing SSH connections to network devices.
+
+#### Scrapli 
+[Scrapli](https://github.com/carlmontanari/scrapli) is somewhat new python library (first release in 2019) that solves the same problems as Netmiko but aims to be "*as fast and flexible as possible"*.
+
+#### TextFSM and NTC Templates
+[TextFSM](https://github.com/google/textfsm) is a python module created by Google which purpose is to parse semi-formatted text (i.e. CLI output). It takes a template file and text as input and produces structured output. [NTC templates](https://github.com/networktocode/ntc-templates) is a collection of TextFSM templates for variety of networking vendors. TextFSM can be used in conjunction with [netmiko](https://pynet.twb-tech.com/blog/automation/netmiko-textfsm.html) and [scrapli](https://github.com/carlmontanari/scrapli#textfsmntc-templates-integration).
+
+#### TTP (Template Text Parser)
+[TTP](https://ttp.readthedocs.io/en/latest/Overview.html) is the newest addition to the text parsing tools. It's also based on templates which resemble Jinja2 syntax but work in reverse. Simple TTP template looks much like the text it is aimed to parse but the parts you want to extract are put in {{ curly braces }}. It doesn't have a collection of prebuilt templates but given its relative ease of use you can quickly create your own.
+
+#### PyATS & Genie
+[This internal Cisco tools](https://developer.cisco.com/docs/pyats/) were publicly released a few years back and continue to develop rapidly. PyATS is a testing and automation framework. It has a lot to it and I encourage you to learn about it on Cisco DevNet resources. Here I would like to focus on two libraries within PyATS framework: [Genie parser](https://github.com/CiscoTestAutomation/genieparser) and [Dq](https://pubhub.devnetcloud.com/media/genie-docs/docs/userguide/utils/index.html#dq). The first one as the name implies is aimed to parse CLI output and has a [huge collection](https://pubhub.devnetcloud.com/media/genie-feature-browser/docs/#/parsers) (2000+) of ready-made parsers for various devices (not limited to Cisco). The second one, Dq, is a great time saver when you need to access the parsed data. Often parsers such as Genie return data in a complex data structures (e.g. nested dictionaries) and to access something you would need loops, if statements and a strong understanding of where to look. With Dq you can make queries without much caring of where in a nested structure your data resides.
+
+### API
+If you are lucky and devices in your network are equipped with API or maybe even driven by SDN controller this section is for you. Network APIs fall in two major categories: HTTP-based and NETCONF-based.
+
+HTTP-based APIs 
+ 
+* CLI scraping vs API
+* RESTful, Netconf, RESTconf, YANG, gNMI
+
 ## Docker and containers
 Linux containers have been around for quite a long time (and [chroot and jail](https://en.wikipedia.org/wiki/Chroot) even longer) but Docker was what made it really popular and accessible.
 
@@ -135,8 +188,7 @@ Containers allow to run software in an isolated environment, but contrary to VMs
 
 Docker (Docker Engine, to be precise) is a software that creates, deletes, and runs containers. You can think of it as similar to ESXi. Docker's ease of use is what made containers so popular.
 
-{{< alert message="Containerization topic is really huge and I don't want to go deep into technicalities here. If you want to learn more about Docker and containers I can recommend a book called [Docker Deep Dive](https://www.amazon.com/Docker-Deep-Dive-Nigel-Poulton-ebook-dp-B01LXWQUFF/dp/B01LXWQUFF/) by Nigel Poulton" type="info" badge="Note" >}}
-
+### Why use Docker?
 What are the main reasons to use containers in general:
 * **Isolation**  
   Application running inside a container has all the libraries of specific versions it needs. If another application needs other versions of the same libraries just use another container image.
@@ -146,23 +198,40 @@ What are the main reasons to use containers in general:
   You can easily create lots of containers to distribute load between them (see [Kubernetes](https://en.wikipedia.org/wiki/Kubernetes))
 * **Performance**  
   Faster to create, quicker to start, consume less resources.
-* **Lots of ready-made images**  
-  Most modern application have a dockerized versions which you can easily install with just one command.
+* **Community**  
+  There are millions of ready-made docker images on [dockerhub](https://hub.docker.com/) which you can use directly or build your own images upon them.
 
-When talking about network automation Docker can come handy in a number of ways.
+### Basic Terminology
+To familiarize yourself with Docker you need to know the basic terminology and tools.
 
-## Ways of interacting with network devices
-* CLI scraping vs API
-* RESTful, Netconf, RESTconf, YANG, gNMI
+{{< alert message="Containerization topic is really huge and I don't want to go deep into technicalities here. If you want to learn more about Docker and containers I can recommend a book called [Docker Deep Dive](https://www.amazon.com/Docker-Deep-Dive-Nigel-Poulton-ebook-dp-B01LXWQUFF/dp/B01LXWQUFF/) by Nigel Poulton" type="info" badge="Note" >}}
 
-## Monitoring
-* SNMP vs Streaming Telemetry
-* Logging
-* State monitoring with PyATS
-* Modern Tools (influxdb, grafana, ELK)
+#### Images
+  To continue the VM analogy you can think of a Docker images as a VM templates. Image contains all the necessary files to run a container and can have a predefined parameters for the container, such as which TCP ports to expose. When you start a container you can override this parameters and add your own. You can run multiple containers from a single image. It is crucial to understand that containers itself are ephemeral or stateless. This means that when you make any changes to the container's filesystem when it's running it won't persist after you restart that container. If you need persistency you should use external storage solutions such as volumes.
+#### Layers
+  Docker images are made of layers. Essentially, a layer is a bunch of files created after running a command in a Dockerfile. If to build another image you use the same commands in a Dockerfile Docker will just reuse the previously created layer. This speeds up image building and saves storage space.
+#### Tags
+  When you are using different versions of the same image you need a way to distinguish between them. That's where tags come in handy. When creating an image or pulling one from a repository you should specify a tag (e.g. python:3.8.5-slim-buster where 3.8.5-slim-buster is a tag), if you don't the `latest` tag will be used. Please note that `latest` has no special meaning, it's just a tag which not necessary denotes the latest version of the image.
+#### Volumes
+  When starting a container you can specify directories or files to be mounted inside the container filesystem. Each such directory or file is called a volume. Volumes come in handy when you need the data to persist or to be shared among different containers. It's also an easy way to insert a custom config file into container, or to use a container as a runtime environment for your script which is mounted inside a container so you can test it without the need to rebuild the container image.
 
-## Testing and modeling tools
-* [Batfish](https://www.batfish.org/)
+#### Dockerfiles
+  [Dockerfile]((https://docs.docker.com/engine/reference/builder/)) is a text file with a set of instructions on how to build an image. It consists of the commands specifying such things as what another image should be used as a base image, what files to copy into the image, what packets to install and so on.
+
+#### Docker Compose
+  [Docker-compose](https://docs.docker.com/compose/) is a simple orchestrator for Docker containers. To start a number of containers without docker-compose you need to type a lot of long commands with multitude of arguments. Docker-compose allows you to specify all that arguments in a simple and clean manner of YAML file. It also allows you to specify dependencies between containers, i.e. in what order they should start. But even if you need to run only one container it's better to write a `docker-compose.yml` just to place all those arguments on record.
+
+### Docker use cases for network automation
+When talking about network automation Docker can come in handy in two major ways:
+* You can build your own automation tools to run in Docker making them portable and automating the packaging process as a result.
+* Most modern tools have a dockerized versions which you can run by entering just one command. This one is really useful when you want to follow a tutorial or to try out a new tool but doesn't want to waste time on setup (which can be quite nontrivial)
+
+Here is a simple workflow to build and run your own Docker container:
+* Write a `Dockerfile`
+* Write a `docker-compose.yml` file
+* Run `docker-compose up`
+
+There are tons of articles on how to write Dockerfiles and use docker-compose. But I guess at first you will use prebuilt images just to get familiar with Docker and you will need to know some basic CLI commands to start, stop. and monitor Docker containers. [Here](https://pagertree.com/2020/01/06/docker-cheat-sheet/) is a good write up on the essential Docker commands you will find useful from the start.
 
 ## Automation tools
 Quick overview and categorization (configuration management, orchestrators)
@@ -178,6 +247,15 @@ You don't necessarily need to know how to code, but it's so much better when you
 ### Nornir
 ### Scrapli
 ### PyATS & Genie
+
+## Monitoring
+* SNMP vs Streaming Telemetry
+* Logging
+* State monitoring with PyATS
+* Modern Tools (influxdb, grafana, ELK)
+
+## Testing and modeling tools
+* [Batfish](https://www.batfish.org/)
 
 ## Code editors
 * VS Code
@@ -210,3 +288,4 @@ I hope this was useful for you to get a grip of what network automation is about
 * [A practical approach to building a network CI/CD pipeline](https://www.intentionet.com/blog/a-practical-approach-to-building-a-network-ci-cd-pipeline/) by Samir Parikh
 * [NetDevOps: what does it even mean?](https://cumulusnetworks.com/blog/netdevops-meaning/) by Madison Emery (Cumulus Networks)
 * [Awesome Network Automation](https://github.com/networktocode/awesome-network-automation) &mdash; curated Awesome list about Network Automation
+* [6 Docker Basics You Should Completely Grasp When Getting Started](https://vsupalov.com/6-docker-basics/) by Vladislav Supalov
