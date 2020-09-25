@@ -27,6 +27,11 @@ feature: "images/2020-08-network_automation.png"
   - [Version control](#version-control)
   - [Summary](#summary)
 - [NetDevOps](#netdevops)
+- [Data models and encodings](#data-models-and-encodings)
+    - [YANG & Openconfig](#yang--openconfig)
+    - [JSON](#json)
+    - [YAML](#yaml)
+    - [XML](#xml)
 - [Tools and technologies](#tools-and-technologies)
   - [Ways of interacting with network devices programmatically](#ways-of-interacting-with-network-devices-programmatically)
     - [CLI](#cli)
@@ -35,7 +40,12 @@ feature: "images/2020-08-network_automation.png"
       - [TextFSM and NTC Templates](#textfsm-and-ntc-templates)
       - [TTP (Template Text Parser)](#ttp-template-text-parser)
       - [PyATS & Genie](#pyats--genie)
-    - [API](#api)
+    - [APIs](#apis)
+      - [RESTful APIs](#restful-apis)
+      - [NETCONF & RESTCONF](#netconf--restconf)
+      - [gRPC & gNMI](#grpc--gnmi)
+      - [Summary](#summary-1)
+  - [Git](#git)
   - [Docker and containers](#docker-and-containers)
     - [Why use Docker?](#why-use-docker)
     - [Basic Terminology](#basic-terminology)
@@ -47,20 +57,13 @@ feature: "images/2020-08-network_automation.png"
       - [Docker Compose](#docker-compose)
     - [Docker use cases for network automation](#docker-use-cases-for-network-automation)
   - [Automation tools](#automation-tools)
-    - [Paramiko, netmiko](#paramiko-netmiko)
     - [NAPALM](#napalm)
     - [Ansible (framework)](#ansible-framework)
-    - [Chef, Puppet, Salt (honorable mentions)](#chef-puppet-salt-honorable-mentions)
     - [Nornir](#nornir)
-    - [Scrapli](#scrapli-1)
     - [PyATS & Genie](#pyats--genie-1)
   - [Monitoring](#monitoring)
   - [Testing and modeling tools](#testing-and-modeling-tools)
   - [Code editors](#code-editors)
-  - [Data formats](#data-formats)
-    - [JSON](#json)
-    - [YAML](#yaml)
-    - [XML](#xml)
 - [Vendor resources](#vendor-resources)
   - [Cisco DevNet](#cisco-devnet)
   - [Juniper](#juniper)
@@ -141,6 +144,18 @@ Of course the presented workflow is rather schematic and aims to give a general 
 
 In the next section I'm going to look at the tools and technologies one can utilize in network automation workflows.
 
+# Data models and encodings
+### YANG & Openconfig
+
+### JSON
+JSON
+
+### YAML
+YAML
+
+### XML
+XML
+
 # Tools and technologies
 This section is quite opinionated and aims to introduce you to the essential tools leaving behind many others for the sake of brevity. I highly recommend to take a look at the [Awesome Network Automation](https://github.com/networktocode/awesome-network-automation) list later.
 
@@ -173,13 +188,50 @@ Fortunately there are a lot of tools and libraries today that make CLI scraping 
 #### PyATS & Genie
 [This internal Cisco tools](https://developer.cisco.com/docs/pyats/) were publicly released a few years back and continue to develop rapidly. PyATS is a testing and automation framework. It has a lot to it and I encourage you to learn about it on Cisco DevNet resources. Here I would like to focus on two libraries within PyATS framework: [Genie parser](https://github.com/CiscoTestAutomation/genieparser) and [Dq](https://pubhub.devnetcloud.com/media/genie-docs/docs/userguide/utils/index.html#dq). The first one as the name implies is aimed to parse CLI output and has a [huge collection](https://pubhub.devnetcloud.com/media/genie-feature-browser/docs/#/parsers) (2000+) of ready-made parsers for various devices (not limited to Cisco). The second one, Dq, is a great time saver when you need to access the parsed data. Often parsers such as Genie return data in a complex data structures (e.g. nested dictionaries) and to access something you would need loops, if statements and a strong understanding of where to look. With Dq you can make queries without much caring of where in a nested structure your data resides.
 
-### API
+### APIs
 If you are lucky and devices in your network are equipped with API or maybe even driven by SDN controller this section is for you. Network APIs fall in two major categories: HTTP-based and NETCONF-based.
 
-HTTP-based APIs 
- 
+#### RESTful APIs
+[REST](https://en.wikipedia.org/wiki/Representational_state_transfer) stands for Representational State Transfer and defines a set of properties and constraints which an API must conform to in order to be called RESTful.
+
+{{< alert message="HTTP-based APIs may be RESTful and non-RESTful. Non-RESTful HTTP-based APIs are left out of scope because they are less common." type="info" badge="Note" >}}
+
+RESTful APIs are quite easy to use and understand because they are based on HTTP protocol. Basically, RESTful API is just a set of HTTP URLs on which you can make GET and/or POST requests except for returned data is encoded in JSON or XML, not HTML. Since RESTful APIs are HTTP-based they are stateless by nature. This means each request is independent of another and has to supply all the needed information to be properly processed.
+
+To explore RESTful APIs you can use tools such as cURL or Postman, but when you are ready to write some code utilizing RESTful API you can use a Python library called [requests](https://requests.readthedocs.io/en/master/).
+
+#### NETCONF & RESTCONF
+[NETCONF](https://tools.ietf.org/html/rfc6241) is a protocol specifically designed for managing network devices. Unlike REST it uses SSH as transport and is stateful as a result. The other key differences of NETCONF are clear delineation between configurational and operational data and the concept of configuration datastores. NETCONF defines three datastores: running configuration, startup configuration, and candidate configuration. You may be familiar with all three of them in context of network devices. Candidate configuration concept allows to deliver a configuration change consisting of many commands as one transaction. This means that if only one command in a transaction fails the transaction does not succeed avoiding a situation when partial configuration is applied.
+
+Exploring NETCONF APIs is not as easy and straightforward as with RESTful APIs. To do so you need to establish an interactive SSH session to a device and send lengthy XML-encoded commands. To access NETCONF APIs programmatically there is a [ncclient](https://github.com/ncclient/ncclient) Python library.
+
+[RESTCONF](https://tools.ietf.org/html/rfc8040) is another standard protocol which implements a subset of NETCONF functionality (e.g. transactions are not supported) and uses HTTP as transport and is RESTful.
+
+When choosing between [NETCONF and RESTCONF](https://www.ipspace.net/kb/CiscoAutomation/070-netconf.html) it's [advised](https://www.claise.be/netconf-versus-restconf-capabilitity-comparisons-for-data-model-driven-management-2/) to use the former for direct interactions with network devices and the latter for interactions with SDN-controllers and/or orchestrators.
+
+#### gRPC & gNMI
+[gNMI](https://tools.ietf.org/html/draft-openconfig-rtgwg-gnmi-spec-01) is a new addition to network management protocols based on Google's [gRPC](https://en.wikipedia.org/wiki/GRPC) and developed by [OpenConfig](https://www.openconfig.net/) working group. It is considered to be a more robust successor of NETCONF and supports [streaming telemetry](https://blogs.cisco.com/developer/getting-started-with-model-driven-telemetry).
+
+Because gNMI is not yet as mature as NETCONF it is not very well supported in Python. Though there are a couple of libraries you can look into: [cisco-gnmi](https://github.com/cisco-ie/cisco-gnmi-python) and [pygnmi](https://github.com/akarneliuk/pygnmi).
+
+#### Summary
+Here is a summary table representing key properties of network API types.
+
+|                     | REST       | NETCONF  | RESTCONF | gNMI |
+| ------------------- | ----       | -------  | -------- | ---   |
+| RFC                 | -          | [RFC 6241](https://tools.ietf.org/html/rfc6241) | [RFC 8040](https://tools.ietf.org/html/rfc8040) | [Draft](https://tools.ietf.org/html/draft-openconfig-rtgwg-gnmi-spec-01) |
+| Transport           | HTTP       | SSH      | HTTP | gRPC (HTTP/2.0) |
+| Data encoding       | XML, JSON  | XML     | XML, JSON | ProtoBuf (binary) |
+| Transaction support | ❌          | ✅        | ❌          | ✅  |
+| Python libs         | [requests](https://requests.readthedocs.io/en/master/) | [ncclient](https://github.com/ncclient/ncclient) | [requests](https://requests.readthedocs.io/en/master/) | [cisco-gnmi](https://github.com/cisco-ie/cisco-gnmi-python), [pygnmi](https://github.com/akarneliuk/pygnmi) |
+
 * CLI scraping vs API
 * RESTful, Netconf, RESTconf, YANG, gNMI
+
+
+
+## Git
+Most popular version control system.
 
 ## Docker and containers
 Linux containers have been around for quite a long time (and [chroot and jail](https://en.wikipedia.org/wiki/Chroot) even longer) but Docker was what made it really popular and accessible.
@@ -237,15 +289,12 @@ There are tons of articles on how to write Dockerfiles and use docker-compose. B
 Quick overview and categorization (configuration management, orchestrators)
 You don't necessarily need to know how to code, but it's so much better when you do.
 
-### Paramiko, netmiko
 ### NAPALM
 ### Ansible (framework)
 * Why so popular for network automation?
 * Project structure: inventory, playbooks, roles
 * Network modules (https://docs.ansible.com/ansible/latest/modules/list_of_network_modules.html)
-### Chef, Puppet, Salt (honorable mentions)
 ### Nornir
-### Scrapli
 ### PyATS & Genie
 
 ## Monitoring
@@ -258,15 +307,10 @@ You don't necessarily need to know how to code, but it's so much better when you
 * [Batfish](https://www.batfish.org/)
 
 ## Code editors
-* VS Code
-* Atom
-* SublimeText
-* PyCharm
+* VS Code (for projects)
+* SublimeText (ad-hoc editing)
 
-## Data formats
-### JSON
-### YAML
-### XML
+
 
 # Vendor resources
 ## Cisco DevNet
