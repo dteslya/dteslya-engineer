@@ -29,10 +29,12 @@ feature: "images/2020-08-network_automation.png"
 - [NetDevOps](#netdevops)
 - [Data models and encodings](#data-models-and-encodings)
     - [YANG & Openconfig](#yang--openconfig)
-    - [JSON](#json)
-    - [YAML](#yaml)
     - [XML](#xml)
+    - [YAML](#yaml)
+    - [JSON](#json)
+    - [Summary](#summary-1)
 - [Tools and technologies](#tools-and-technologies)
+  - [Python](#python)
   - [Ways of interacting with network devices programmatically](#ways-of-interacting-with-network-devices-programmatically)
     - [CLI](#cli)
       - [Netmiko](#netmiko)
@@ -44,8 +46,20 @@ feature: "images/2020-08-network_automation.png"
       - [RESTful APIs](#restful-apis)
       - [NETCONF & RESTCONF](#netconf--restconf)
       - [gRPC & gNMI](#grpc--gnmi)
-      - [Summary](#summary-1)
+      - [Summary](#summary-2)
   - [Git](#git)
+    - [Why use Git?](#why-use-git)
+    - [Terminology](#terminology)
+      - [Repository](#repository)
+      - [Working directory](#working-directory)
+      - [Staging](#staging)
+      - [Commit](#commit)
+      - [Branch](#branch)
+      - [Pull (merge) request](#pull-merge-request)
+    - [Basic usage](#basic-usage)
+      - [Command line](#command-line)
+      - [Dealing with mistakes](#dealing-with-mistakes)
+      - [.gitignore](#gitignore)
   - [Docker and containers](#docker-and-containers)
     - [Why use Docker?](#why-use-docker)
     - [Basic Terminology](#basic-terminology)
@@ -94,7 +108,7 @@ DevOps has many aspects to it but I'd like to focus on three key practices which
 According to Wikipedia, IaC is ...
 >... the process of managing and provisioning computer data centers through machine-readable definition files, rather than physical hardware configuration or interactive configuration tools.
 
-What this really mean is that you have a bunch of text files in which you define the desired state of you infrastructure: number of VMs, their properties, virtual networks, ip addresses etc. etc. Then these files are processed by IaC tool or framework (Terraform, SaltStack, Ansible are just a few examples) which translates that declared state into actual API calls and configuration files and apply it to the infrastructure in order to bring it to the desired state. This gives you a level of abstraction since you focus only on the resulting state and not on how to achieve it. Here I should mention one of the key features of IaC approach which is [idempotence](https://en.wikipedia.org/wiki/Idempotence). This feature allows you to run an IaC tool repeatedly and if something is already in a desired state it won't touch it. For example, if you declare that a certain VLAN should be configured on a switch and it is already there, when you run an IaC tool against that switch it won't try to configure anything.
+What this really mean is that you have a bunch of text files in which you define the desired state of you infrastructure: number of VMs, their properties, virtual networks, IP addresses etc. etc. Then these files are processed by IaC tool or framework (Terraform, SaltStack, Ansible are just a few examples) which translates that declared state into actual API calls and configuration files and apply it to the infrastructure in order to bring it to the desired state. This gives you a level of abstraction since you focus only on the resulting state and not on how to achieve it. Here I should mention one of the key features of IaC approach which is [idempotence](https://en.wikipedia.org/wiki/Idempotence). This feature allows you to run an IaC tool repeatedly and if something is already in a desired state it won't touch it. For example, if you declare that a certain VLAN should be configured on a switch and it is already there when you run an IaC tool against that switch it won't try to configure anything.
 
 Treating your infrastructure as text files enables you to apply the same tools and practices to infrastructure as one would apply to any other software project. CI/CD and version control are main examples here.
 
@@ -111,11 +125,11 @@ CI/CD stands for Continuous Integration / Continuous Delivery or Deployment. Let
 Version control system is a foundation for any automation project. It tracks changes in your project files (source code), logs who made those changes, and enables CI/CD workflows.
 {{< figure src="https://imgs.xkcd.com/comics/git.png" alt="xkcd - Git" caption="Git" attr="xkcd" attrlink="https://xkcd.com/1597/">}}
 
-Today [Git](https://git-scm.com/) is the de facto standard in version control systems. Essentially git is just a command line tool (though very powerfull) that manages project versioning by creating and manipulating metadata kept in a separate hidden directory in project's [working directory](https://en.wikipedia.org/wiki/Working_directory). But all the magic comes with web-based source control systems such as GitHub or GitLab among others.
+Today [Git](#git) is the de facto standard in version control systems. Essentially git is just a command line tool (though very powerful) that manages project versioning by creating and manipulating metadata kept in a separate hidden directory in project's [working directory](https://en.wikipedia.org/wiki/Working_directory). But all the magic comes with web-based source control systems such as GitHub or GitLab among others.
 
 {{< alert message="Many people confuse Git and GitHub because the latter became a [generic term](https://en.wikipedia.org/wiki/Generic_trademark) for version control systems." type="info" badge="Note" >}}
 
-Lets suppose you are on a team of developers working on a project hosted on GitHub. Your typical [workflow](https://guides.github.com/introduction/flow/)  will go like this:
+Let's suppose you are on a team of developers working on a project hosted on GitHub. Your typical [workflow](https://guides.github.com/introduction/flow/)  will go like this:
 * You want to make changes to the source code. It may be a bug fix or a new feature. You create a new branch from the main one and start making [commits](https://en.wikipedia.org/wiki/Commit_(version_control)). This doesn't affect the main branch in any way.
 * When the work seems to be done it's time to create a [pull request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests). PR is a way to tell other developers (project maintainers) that you want to merge your branch with the main one. PR creation can trigger CI tests if they are configured. After all CI tests pass successfully the code is reviewed by other team members. If CI tests fail or something needs to be improved the PR will be rejected. Then you can fix your code in the same branch and create another PR. 
 {{< alert message="Usually, PR's are never merged automatically and someone need to make the final decision." type="info" badge="Note" >}}
@@ -123,7 +137,7 @@ Lets suppose you are on a team of developers working on a project hosted on GitH
 * If CD is configured merging with the main branch triggers deployment to the production environment.
 
 ## Summary
-In this section a gave a brief overview of what DevOps is and it's main tools and practices. In the next section I'll try to explain how it can be applied to networks and network automation.
+In this section I gave a brief overview of what DevOps is and it's main tools and practices. In the next section I'll try to explain how it can be applied to networks and network automation.
 
 # NetDevOps
 Now that you've read the previous section you should guess that NetDevOps is just a DevOps approach applied to networking. All of the aforementioned key DevOps practices can be aligned with network: device configurations can be templated (IaC) and put into version control system where CI/CD processes are applied.
@@ -136,35 +150,148 @@ The workflow starts with a network operator introducing a change (1) either to t
 
 **Source of Truth** is a database (e.g. SQL DB or plain text files) where constants such as VLAN numbers and IP addresses are stored. Actually this can be a number of databases &mdash; you can get your IP information from [IPAM](https://en.wikipedia.org/wiki/IP_address_management) and interface descriptions from [DCIM](https://en.wikipedia.org/wiki/Data_center_management#Data_center_infrastructure_management) ([Netbox](https://netbox.readthedocs.io/en/stable/) is a great example that can do both). The key idea here is that each database must be the [single source of truth](https://en.wikipedia.org/wiki/Single_source_of_truth) for the particular piece of information, so when you need to change something you change it only in one place.
 
-**Configuration templates** are just text files written in a templating language of choice (I guess [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) is the most popular one). When combined with the info from the SoT they produce device-specific config files. Templating allows you to break down device configurations into separate template files each one representing specific config section and then mix and match them to produce configurations for different network devices. Some templates may be reused across multiple devices and some may be created for specific software version or vendor.
+**Configuration templates** are just text files written in a templating language of choice (I guess [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) is the most popular one). When combined with the info from the SoT they produce device-specific config files. Templating allows you to break down device configurations into separate template files each one representing specific config section and then mix and match them to produce configurations for different network devices. Some templates may be reused across multiple devices and some may be created for specific software versions or vendors.
 
 Making changes to the SoT or the templates triggers (2) the rest of the process. First, both those sources of information are used by the configuration management system (e.g. Ansible, more on this later) to generate the resulting configuration files to be applied to the network devices. These configs then must be validated (3). Validation usually includes a number of automated tests (syntax check, use of modeling software, spinning up virtual devices) and a peer review. If validation fails some form of feedback is given to the initiator of change (4) so they can remediate and start the whole process again. If validation is passed resulting configs can be deployed to the production network (5).
 
-Of course the presented workflow is rather schematic and aims to give a general idea of the network automation process and the role of the core components in it.
+Of course, the presented workflow is rather schematic and aims to give a general idea of the network automation process and the role of the core components in it.
 
-In the next section I'm going to look at the tools and technologies one can utilize in network automation workflows.
+In the next section, I'm going to look at the tools and technologies one can utilize in network automation workflows.
 
 # Data models and encodings
+Understanding how data can be structured and encoded is very important in programming in general and in network automation in particular.
+
 ### YANG & Openconfig
+YANG (Yet Another Next Generation) is a data modeling language originally developed for [NETCONF](#netconf--restconf) and defined in [RFC 6020](https://tools.ietf.org/html/rfc6020) and then updated in [RFC 7950](https://tools.ietf.org/html/rfc7950). YANG and NETCONF can be considered as successors to [SMIng](https://tools.ietf.org/html/rfc3780) and [SNMP](https://en.wikipedia.org/wiki/Simple_Network_Management_Protocol). 
 
-### JSON
-JSON
+>YANG provides a format-independent way to describe a data model that can be represented in XML or JSON.
+>
+> <cite>Jason Edelman, Scott S. Lowe, Matt Oswalt. Network Programmability and Automation, p. 183</cite>
 
-### YAML
-YAML
+There are [hundreds](https://github.com/YangModels/yang) of YANG data models available both [vendor-neutral](https://github.com/openconfig/public) and vendor-specific. The [YANG catalog](https://yangcatalog.org/) web site can be helpful if you need to find data models relevant to your tasks.
+
+Because of this abundance of data models and lack of coordination between standards developing organizations and vendors it seem that YANG and NETCONF are going the same path SNMP went (i.e. used only for data retrieval, but not configuration). [OpenConfig](https://www.openconfig.net/) workgroup tries to solve this by providing vendor-neutral data models, but I think that [Ivan Pepelnjak's](https://blog.ipspace.net/2018/01/use-yang-data-models-to-configure.html) point from 2018 stating that "*seamless multi-vendor network device configuration is still a pipe dream*" still holds in 2020.
 
 ### XML
-XML
+[XML](https://en.wikipedia.org/wiki/XML) (eXtensible Markup Language) although a bit old is still widely used in various APIs. It uses tags to encode data hence is a bit hard to read by humans. It was initially designed for documents but is suitable to represent arbitrary data structures.
+
+You can refer to this [tutorial](https://www.w3schools.com/xml/) to learn more about XML.
+
+Let's see how this sample CLI output of Cisco IOS `show vlan` command can be encoded with XML:
+```
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi3/4, Gi3/5, Gi4/11
+
+<...>
+
+VLAN Type  SAID       MTU   Parent RingNo BridgeNo Stp  BrdgMode Trans1 Trans2
+---- ----- ---------- ----- ------ ------ -------- ---- -------- ------ ------
+1    enet  100001     1500  -      -      -        -    -        0      0
+```
+
+This is how it looks in XML:
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+	<vlans>
+		<1>
+			<interfaces>GigabitEthernet3/4</interfaces>
+			<interfaces>GigabitEthernet3/5</interfaces>
+			<interfaces>GigabitEthernet4/11</interfaces>
+			<mtu>1500</mtu>
+			<name>default</name>
+			<said>100001</said>
+			<shutdown>false</shutdown>
+			<state>active</state>
+			<trans1>0</trans1>
+			<trans2>0</trans2>
+			<type>enet</type>
+			<vlan_id>1</vlan_id>
+		</1>
+	</vlans>
+</root>
+```
+
+
+### YAML
+[YAML](https://en.wikipedia.org/wiki/YAML) (YAML Ain’t Markup Language) is a human-friendly data serialization format. Because YAML is really easy to read and write it is widely used in modern automation tools  for configuration files and even for defining automation tasks logic (see Ansible).
+
+You can refer to this [tutorial](https://rollout.io/blog/yaml-tutorial-everything-you-need-get-started/) to learn more about YAML.
+
+Here is a `show vlan` output from previous subsection encoded in YAML:
+```yaml
+---
+vlans:
+  '1':
+    interfaces:
+    - GigabitEthernet3/4
+    - GigabitEthernet3/5
+    - GigabitEthernet4/11
+    mtu: 1500
+    name: default
+    said: 100001
+    shutdown: false
+    state: active
+    trans1: 0
+    trans2: 0
+    type: enet
+    vlan_id: '1'
+```
+
+### JSON
+JSON (JavaScript Object Notation) is a modern data encoding format defined in [RFC 7159](https://tools.ietf.org/html/rfc7159.html) and widely used in web APIs. It's lightweight, human-readable, and is more suited for data models of modern programming languages than XML.
+
+You can refer to this [tutorial](https://www.w3schools.com/js/js_json_intro.asp) to learn more about JSON.
+
+Here is the sample data from previous sections encoded in JSON:
+
+```json
+{
+	"vlans": {
+		"1": {
+			"interfaces": [
+				"GigabitEthernet3/4",
+				"GigabitEthernet3/5",
+				"GigabitEthernet4/11"
+			],
+			"mtu": 1500,
+			"name": "default",
+			"said": 100001,
+			"shutdown": false,
+			"state": "active",
+			"trans1": 0,
+			"trans2": 0,
+			"type": "enet",
+			"vlan_id": "1"
+		}
+	}
+}
+```
+As you can see it's almost as easy to read as YAML, however native JSON doesn't support comments making it not very suitable for configuration files.
+
+### Summary
+Here is a summary table representing the key properties of data formats.
+
+|  | XML | YAML | JSON |
+| --- | --- | --- | --- |
+| Human readable | not really | yes | yes |
+| Purpose | documents, APIs | configuration files | APIs |
+| Python libs | [xml](https://docs.python.org/3/library/xml.html), [lxml](https://lxml.de/) | [PyYAML](https://pyyaml.org/wiki/PyYAMLDocumentation) | [json](https://docs.python.org/3/library/json.html) |
+
+There are online tools like [this one](https://codebeautify.org/yaml-to-json-xml-csv) to convert data between all three formats.
 
 # Tools and technologies
 This section is quite opinionated and aims to introduce you to the essential tools leaving behind many others for the sake of brevity. I highly recommend to take a look at the [Awesome Network Automation](https://github.com/networktocode/awesome-network-automation) list later.
+
+## Python
 
 ## Ways of interacting with network devices programmatically
 There are two major ways of accessing network devices programmatically: CLI and API.
 ### CLI
 For a long time the only API of network devices was CLI which is designed to be used by humans and not automation scripts. These are the main drawbacks of using CLI as an API:
 * **Inconsistent data output**  
-  Same command outputs may differ from one NOS (Network Operating System) version to another.
+  The same command outputs may differ from one NOS (Network Operating System) version to another.
 * **Unstructured data output**  
   Data returned by command execution in CLI is plain text, which means you have to manually parse it (i.e. CLI scraping)
 * **Unreliable command execution**  
@@ -186,7 +313,7 @@ Fortunately there are a lot of tools and libraries today that make CLI scraping 
 [TTP](https://ttp.readthedocs.io/en/latest/Overview.html) is the newest addition to the text parsing tools. It's also based on templates which resemble Jinja2 syntax but work in reverse. Simple TTP template looks much like the text it is aimed to parse but the parts you want to extract are put in {{ curly braces }}. It doesn't have a collection of prebuilt templates but given its relative ease of use you can quickly create your own.
 
 #### PyATS & Genie
-[This internal Cisco tools](https://developer.cisco.com/docs/pyats/) were publicly released a few years back and continue to develop rapidly. PyATS is a testing and automation framework. It has a lot to it and I encourage you to learn about it on Cisco DevNet resources. Here I would like to focus on two libraries within PyATS framework: [Genie parser](https://github.com/CiscoTestAutomation/genieparser) and [Dq](https://pubhub.devnetcloud.com/media/genie-docs/docs/userguide/utils/index.html#dq). The first one as the name implies is aimed to parse CLI output and has a [huge collection](https://pubhub.devnetcloud.com/media/genie-feature-browser/docs/#/parsers) (2000+) of ready-made parsers for various devices (not limited to Cisco). The second one, Dq, is a great time saver when you need to access the parsed data. Often parsers such as Genie return data in a complex data structures (e.g. nested dictionaries) and to access something you would need loops, if statements and a strong understanding of where to look. With Dq you can make queries without much caring of where in a nested structure your data resides.
+[This internal Cisco tools](https://developer.cisco.com/docs/pyats/) were publicly released a few years back and continue to develop rapidly. PyATS is a testing and automation framework. It has a lot to it and I encourage you to learn about it on Cisco DevNet resources. Here I would like to focus on two libraries within PyATS framework: [Genie parser](https://github.com/CiscoTestAutomation/genieparser) and [Dq](https://pubhub.devnetcloud.com/media/genie-docs/docs/userguide/utils/index.html#dq). The first one as the name implies is aimed to parse CLI output and has a [huge collection](https://pubhub.devnetcloud.com/media/genie-feature-browser/docs/#/parsers) (2000+) of ready-made parsers for various devices (not limited to Cisco). The second one, Dq, is a great time saver when you need to access the parsed data. Often parsers such as Genie return data in complex data structures (e.g. nested dictionaries) and to access something you would need loops if statements and a strong understanding of where to look. With Dq, you can make queries without much caring of where in a nested structure your data resides.
 
 ### APIs
 If you are lucky and devices in your network are equipped with API or maybe even driven by SDN controller this section is for you. Network APIs fall in two major categories: HTTP-based and NETCONF-based.
@@ -198,7 +325,9 @@ If you are lucky and devices in your network are equipped with API or maybe even
 
 RESTful APIs are quite easy to use and understand because they are based on HTTP protocol. Basically, RESTful API is just a set of HTTP URLs on which you can make GET and/or POST requests except for returned data is encoded in JSON or XML, not HTML. Since RESTful APIs are HTTP-based they are stateless by nature. This means each request is independent of another and has to supply all the needed information to be properly processed.
 
-To explore RESTful APIs you can use tools such as cURL or Postman, but when you are ready to write some code utilizing RESTful API you can use a Python library called [requests](https://requests.readthedocs.io/en/master/).
+To explore RESTful APIs you can use tools such as [cURL](https://curl.haxx.se/) or [Postman](https://www.postman.com/), but when you are ready to write some code utilizing RESTful API you can use a Python library called [requests](https://requests.readthedocs.io/en/master/).
+
+There are several mock REST APIs online which you can use for practice. For example, [kanye.rest](https://kanye.rest/) and [JSONPlaceholder](https://jsonplaceholder.typicode.com/).
 
 #### NETCONF & RESTCONF
 [NETCONF](https://tools.ietf.org/html/rfc6241) is a protocol specifically designed for managing network devices. Unlike REST it uses SSH as transport and is stateful as a result. The other key differences of NETCONF are clear delineation between configurational and operational data and the concept of configuration datastores. NETCONF defines three datastores: running configuration, startup configuration, and candidate configuration. You may be familiar with all three of them in context of network devices. Candidate configuration concept allows to deliver a configuration change consisting of many commands as one transaction. This means that if only one command in a transaction fails the transaction does not succeed avoiding a situation when partial configuration is applied.
@@ -225,13 +354,56 @@ Here is a summary table representing key properties of network API types.
 | Transaction support | ❌          | ✅        | ❌          | ✅  |
 | Python libs         | [requests](https://requests.readthedocs.io/en/master/) | [ncclient](https://github.com/ncclient/ncclient) | [requests](https://requests.readthedocs.io/en/master/) | [cisco-gnmi](https://github.com/cisco-ie/cisco-gnmi-python), [pygnmi](https://github.com/akarneliuk/pygnmi) |
 
-* CLI scraping vs API
-* RESTful, Netconf, RESTconf, YANG, gNMI
-
-
-
 ## Git
-Most popular version control system.
+This section covers basic Git usage and terminology. But first, I'd like to highlight several reasons why you should care about Git and version control in the first place.
+
+### Why use Git?
+
+* **Visibility & control**  
+  By placing your scripts, configuration templates, or even device configurations in Git you can start tracking all the changes and rollback to previous versions if needed.
+* **Experimenting**  
+  When working on a new feature it's very convenient to create a new branch in the same Git repository rather than copy the whole working directory to a new place.
+* **Teamwork**  
+  Sooner or later you'll need to share your work with your teammates. Git is the best tool to collaborate without the need to send each other file copies.
+* **CI/CD**  
+  CI/CD processes are based around source control. Events such as commits or branch merging trigger CI/CD pipelines.
+
+### Terminology
+#### Repository
+Git repository is a project's directory containing all the project files plus a hidden directory named `.git` where all the Git metadata (change history, configuration, etc.) resides. In the example below `example-repo` is a Git repository.
+```
+example-repo
+├── .git
+│   ├── ...
+├── file1
+└── file2
+...
+```
+Git repository consists of three "trees". The first one is your `Working Directory` or `Working Tree` where all the files you work with stay. The second one is the `Index` where you put files to be committed by issuing a `git add` command and finally the `HEAD` which points to the last commit you've made. `Index` and `HEAD` are stored in a `.git` subdirectory and you never interact with them directly.
+
+Git repository can be local or remote. All the changes you make to the working directory are stored in a local repository. The synchronization between local and remote repositories is always done manually.
+
+#### Working directory
+Think of a Git working directory as a sandbox where you make changes to your project's files. Here is a good explanation from the [official documentation](https://git-scm.com/book/en/v2/Git-Tools-Reset-Demystified#_git_reset):
+>Finally, you have your working directory (also commonly referred to as the “working tree”). The other two trees store their content in an efficient but inconvenient manner, inside the .git folder. The working directory unpacks them into actual files, which makes it much easier for you to edit them. Think of the working directory as a sandbox, where you can try changes out before committing them to your staging area (index) and then to history.
+#### Staging
+When you want to put your changes to Git history, i.e. make a commit, you choose which files you want to commit and issue a `git add` on them. This way you can put changes in different files to different commits thus grouping them by their function or meaning. Staging also enables you to review your changes before committing.
+#### Commit
+Commit saves staged changes to the local Git repository. It also includes metadata such as the author, the date of the commit, and a [commit message](https://chris.beams.io/posts/git-commit/).
+#### Branch
+When you feel like adding a new feature or want to [refactor](https://en.wikipedia.org/wiki/Code_refactoring) the existing code it's a good idea to create a new branch, do your work there, and then merge it back to the main branch. This gives you confidence that you wouldn't break the existing code. It also allows different developers to work on the same codebase without blocking each other.
+
+Git [branching](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell) is extremely lightweight and allows to create and switch between different branches almost instantaneously.
+#### Pull (merge) request
+[Pull](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-pull-requests) (GitHub) or [merge](https://docs.gitlab.com/ee/user/project/merge_requests/) (GitLab) request is a feature specific to web-based Git-repository managers that provides a simple way to submit your work to the project. There is a lot of confusion about why it's called a pull request and not a push request as you want to add you changes to the repo. The reasoning behind this naming is simple. When you create a pull request you actually request the project's maintainer to pull your submitted changes to the repository.
+### Basic usage
+#### Command line
+To start using Git in command line I recommend to take a look a [this](https://rogerdudler.github.io/git-guide/) simple but useful Git guide for the beginners by Roger Dudler.
+#### Dealing with mistakes
+Eventually, you will screw something up (e.g. make a commit to the wrong branch). For such situations, there is a good [resource](https://ohshitgit.com/) that can help with common Git headaches.
+
+#### .gitignore
+To make Git [ignore](https://git-scm.com/docs/gitignore) specific files or even subdirectories you can list them in a special file called `.gitignore`. This is extremely useful when you want to keep your remote repository clean of temporary files or files containing sensitive information (e.g. passwords).
 
 ## Docker and containers
 Linux containers have been around for quite a long time (and [chroot and jail](https://en.wikipedia.org/wiki/Chroot) even longer) but Docker was what made it really popular and accessible.
@@ -309,7 +481,7 @@ You don't necessarily need to know how to code, but it's so much better when you
 ## Code editors
 * VS Code (for projects)
 * SublimeText (ad-hoc editing)
-
+https://blog.robenkleene.com/2020/09/21/the-era-of-visual-studio-code/
 
 
 # Vendor resources
