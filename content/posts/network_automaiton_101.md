@@ -72,24 +72,33 @@ feature: "images/2020-08-network_automation.png"
     - [Docker use cases for network automation](#docker-use-cases-for-network-automation)
   - [Automation tools](#automation-tools)
     - [NAPALM](#napalm)
-    - [Ansible (framework)](#ansible-framework)
+      - [Supported devices](#supported-devices)
+      - [Working with device configuration](#working-with-device-configuration)
+      - [Validating deployment](#validating-deployment)
+      - [Integration with other tools](#integration-with-other-tools)
+    - [Ansible](#ansible)
+      - [Ansible Galaxy](#ansible-galaxy)
+      - [Terminology](#terminology-1)
+        - [Inventory](#inventory)
+        - [Playbooks](#playbooks)
+        - [Roles](#roles)
+      - [Pros & Cons](#pros--cons)
     - [Nornir](#nornir)
-    - [PyATS & Genie](#pyats--genie-1)
-  - [Monitoring](#monitoring)
-  - [Testing and modeling tools](#testing-and-modeling-tools)
-  - [Code editors](#code-editors)
-- [Vendor resources](#vendor-resources)
-  - [Cisco DevNet](#cisco-devnet)
-  - [Juniper](#juniper)
-  - [Arista?](#arista)
-  - [Cumulus](#cumulus)
-- [Who to follow on social media](#who-to-follow-on-social-media)
+    - [Summary](#summary-3)
+  - [Text editors](#text-editors)
+    - [VS Code](#vs-code)
+    - [Atom](#atom)
+    - [PyCharm](#pycharm)
+    - [Sublime Text](#sublime-text)
+    - [Summary](#summary-4)
 - [Conclusion](#conclusion)
 - [References and further reading](#references-and-further-reading)
 <hr>
 
 # Introduction
-In this post I want to gather everything I learned about network automation so far in a structured and concise manner. The main audience of this guide are engineers who want to start automating their networks but are overwhelmed by the abundance of terms, tools, and concepts.
+In this post, I want to gather everything I learned about network automation so far in a structured and concise manner. The main audience of this guide are engineers who want to start automating their networks but are overwhelmed by the abundance of terms, tools, and concepts.
+
+{{< figure src="https://imgs.xkcd.com/comics/automation.png" alt="xkcd - Automation" caption="Automation" attr="xkcd" attrlink="https://xkcd.com/1319/">}}
 
 # DevOps
 When trying to grasp a new concept or technology I find it helpful to spend some extra time on learning about subject's origins. It gives context and perspective which are crucial to learning about something complex. So before diving into network automation topic I'd like to drop a few lines about where it all came from.
@@ -108,22 +117,21 @@ DevOps has many aspects to it but I'd like to focus on three key practices which
 According to Wikipedia, IaC is ...
 >... the process of managing and provisioning computer data centers through machine-readable definition files, rather than physical hardware configuration or interactive configuration tools.
 
-What this really mean is that you have a bunch of text files in which you define the desired state of you infrastructure: number of VMs, their properties, virtual networks, IP addresses etc. etc. Then these files are processed by IaC tool or framework (Terraform, SaltStack, Ansible are just a few examples) which translates that declared state into actual API calls and configuration files and apply it to the infrastructure in order to bring it to the desired state. This gives you a level of abstraction since you focus only on the resulting state and not on how to achieve it. Here I should mention one of the key features of IaC approach which is [idempotence](https://en.wikipedia.org/wiki/Idempotence). This feature allows you to run an IaC tool repeatedly and if something is already in a desired state it won't touch it. For example, if you declare that a certain VLAN should be configured on a switch and it is already there when you run an IaC tool against that switch it won't try to configure anything.
+What this really means is that you have a bunch of text files where you define the desired state of your infrastructure: number of VMs, their properties, virtual networks, IP addresses etc. etc. Then these files are processed by IaC tool or framework (Terraform, SaltStack, [Ansible](#ansible) are just a few examples) which translates that declared state into actual API calls and configuration files and applies it to the infrastructure in order to bring it to the desired state. This gives you a level of abstraction since you focus only on the resulting state and not on how to achieve it. Here I should mention one of the key features of IaC approach which is [idempotence](https://en.wikipedia.org/wiki/Idempotence). This feature allows you to run an IaC tool repeatedly and if something is already in the desired state it won't touch it. For example, if you declare that a certain VLAN should be configured on a switch and it is already there when you run an IaC tool against that switch it won't try to configure anything.
 
-Treating your infrastructure as text files enables you to apply the same tools and practices to infrastructure as one would apply to any other software project. CI/CD and version control are main examples here.
+Treating your infrastructure as text files enables you to apply the same tools and practices to infrastructure as one would apply to any other software project. CI/CD and version control are the main examples here.
 
 ## CI/CD
-CI/CD stands for Continuous Integration / Continuous Delivery or Deployment. Lets look into each component in more detail.
+CI/CD stands for Continuous Integration / Continuous Delivery or Deployment. Let's look into each component in more detail.
 
-**Continuous Integration** &mdash; a process of frequent (up to several times a day) merges of code changes to the main code repository. These merges are accompanied by various tests and quality control processes such as unit and integration tests, [static code analysis](https://en.wikipedia.org/wiki/Static_program_analysis), extraction of documentation from the source code etc. This approach allows to integrate code changes frequently by different developers therefore mitigating risks of integration conflicts.
+**Continuous Integration** &mdash; a process of frequent (up to several times a day) merges of code changes to the main code repository. These merges are accompanied by various tests and quality control processes such as unit and integration tests, [static code analysis](https://en.wikipedia.org/wiki/Static_program_analysis), extraction of documentation from the source code, etc. This approach allows to integrate code changes frequently by different developers therefore mitigating risks of integration conflicts.
 
-**Continuous Delivery** &mdash; extension of CI which takes care of automating the release process (e.g. packaging, image building etc). Continuous delivery allows you to deploy your application to production environment at any time.
+**Continuous Delivery** &mdash; extension of CI which takes care of automating the release process (e.g. packaging, image building, etc). Continuous delivery allows you to deploy your application to the production environment at any time.
 
 **Continuous Deployment** &mdash; extension of continuous delivery, but this time deployment to production is also automated.
 
 ## Version control
-Version control system is a foundation for any automation project. It tracks changes in your project files (source code), logs who made those changes, and enables CI/CD workflows.
-{{< figure src="https://imgs.xkcd.com/comics/git.png" alt="xkcd - Git" caption="Git" attr="xkcd" attrlink="https://xkcd.com/1597/">}}
+A version control system is a foundation for any automation project. It tracks changes in your project files (source code), logs who made those changes, and enables CI/CD workflows.
 
 Today [Git](#git) is the de facto standard in version control systems. Essentially git is just a command line tool (though very powerful) that manages project versioning by creating and manipulating metadata kept in a separate hidden directory in project's [working directory](https://en.wikipedia.org/wiki/Working_directory). But all the magic comes with web-based source control systems such as GitHub or GitLab among others.
 
@@ -137,10 +145,10 @@ Let's suppose you are on a team of developers working on a project hosted on Git
 * If CD is configured merging with the main branch triggers deployment to the production environment.
 
 ## Summary
-In this section I gave a brief overview of what DevOps is and it's main tools and practices. In the next section I'll try to explain how it can be applied to networks and network automation.
+In this section, I gave a brief overview of what DevOps is and it's main tools and practices. In the next section, I'll try to explain how it can be applied to networks and network automation.
 
 # NetDevOps
-Now that you've read the previous section you should guess that NetDevOps is just a DevOps approach applied to networking. All of the aforementioned key DevOps practices can be aligned with network: device configurations can be templated (IaC) and put into version control system where CI/CD processes are applied.
+Now that you've read the previous section you should guess that NetDevOps is just a DevOps approach applied to networking. All of the aforementioned key DevOps practices can be aligned with the network: device configurations can be templated (IaC) and put into a version control system where CI/CD processes are applied.
 
 Below is the sample diagram representing the whole process.
 
@@ -148,11 +156,11 @@ Below is the sample diagram representing the whole process.
 
 The workflow starts with a network operator introducing a change (1) either to the *Source of Truth* or to the *configuration templates*. So what are those exactly?
 
-**Source of Truth** is a database (e.g. SQL DB or plain text files) where constants such as VLAN numbers and IP addresses are stored. Actually this can be a number of databases &mdash; you can get your IP information from [IPAM](https://en.wikipedia.org/wiki/IP_address_management) and interface descriptions from [DCIM](https://en.wikipedia.org/wiki/Data_center_management#Data_center_infrastructure_management) ([Netbox](https://netbox.readthedocs.io/en/stable/) is a great example that can do both). The key idea here is that each database must be the [single source of truth](https://en.wikipedia.org/wiki/Single_source_of_truth) for the particular piece of information, so when you need to change something you change it only in one place.
+**Source of Truth** is a database (e.g. SQL DB or plain text files) where constants such as VLAN numbers and IP addresses are stored. Actually, this can be several databases &mdash; you can get your IP information from [IPAM](https://en.wikipedia.org/wiki/IP_address_management) and interface descriptions from [DCIM](https://en.wikipedia.org/wiki/Data_center_management#Data_center_infrastructure_management) ([Netbox](https://netbox.readthedocs.io/en/stable/) is a great example that can do both). The key idea here is that each database must be the [single source of truth](https://en.wikipedia.org/wiki/Single_source_of_truth) for the particular piece of information, so when you need to change something you change it only in one place.
 
-**Configuration templates** are just text files written in a templating language of choice (I guess [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) is the most popular one). When combined with the info from the SoT they produce device-specific config files. Templating allows you to break down device configurations into separate template files each one representing specific config section and then mix and match them to produce configurations for different network devices. Some templates may be reused across multiple devices and some may be created for specific software versions or vendors.
+**Configuration templates** are just text files written in a templating language of choice (I guess [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) is the most popular one). When combined with the info from the SoT they produce device-specific config files. Templating allows you to break down device configurations into separate template files each one representing a specific config section and then mix and match them to produce configurations for different network devices. Some templates may be reused across multiple devices and some may be created for specific software versions or vendors.
 
-Making changes to the SoT or the templates triggers (2) the rest of the process. First, both those sources of information are used by the configuration management system (e.g. Ansible, more on this later) to generate the resulting configuration files to be applied to the network devices. These configs then must be validated (3). Validation usually includes a number of automated tests (syntax check, use of modeling software, spinning up virtual devices) and a peer review. If validation fails some form of feedback is given to the initiator of change (4) so they can remediate and start the whole process again. If validation is passed resulting configs can be deployed to the production network (5).
+Making changes to the SoT or the templates triggers (2) the rest of the process. First, both those sources of information are used by the configuration management system (e.g. Ansible, more on this later) to generate the resulting configuration files to be applied to the network devices. These configs then must be validated (3). Validation usually includes several automated tests (syntax check, use of [modeling software](https://www.batfish.org/), spinning up virtual devices) and a peer review. If validation fails some form of feedback is given to the initiator of change (4) so they can remediate and start the whole process again. If validation is passed resulting configs can be deployed to the production network (5).
 
 Of course, the presented workflow is rather schematic and aims to give a general idea of the network automation process and the role of the core components in it.
 
@@ -170,7 +178,7 @@ YANG (Yet Another Next Generation) is a data modeling language originally develo
 
 There are [hundreds](https://github.com/YangModels/yang) of YANG data models available both [vendor-neutral](https://github.com/openconfig/public) and vendor-specific. The [YANG catalog](https://yangcatalog.org/) web site can be helpful if you need to find data models relevant to your tasks.
 
-Because of this abundance of data models and lack of coordination between standards developing organizations and vendors it seem that YANG and NETCONF are going the same path SNMP went (i.e. used only for data retrieval, but not configuration). [OpenConfig](https://www.openconfig.net/) workgroup tries to solve this by providing vendor-neutral data models, but I think that [Ivan Pepelnjak's](https://blog.ipspace.net/2018/01/use-yang-data-models-to-configure.html) point from 2018 stating that "*seamless multi-vendor network device configuration is still a pipe dream*" still holds in 2020.
+Because of this abundance of data models and lack of coordination between standards developing organizations and vendors it seems that YANG and NETCONF are going the same path SNMP went (i.e. used only for data retrieval, but not configuration). [OpenConfig](https://www.openconfig.net/) workgroup tries to solve this by providing vendor-neutral data models, but I think that [Ivan Pepelnjak's](https://blog.ipspace.net/2018/01/use-yang-data-models-to-configure.html) point from 2018 stating that "*seamless multi-vendor network device configuration is still a pipe dream*" still holds in 2020.
 
 ### XML
 [XML](https://en.wikipedia.org/wiki/XML) (eXtensible Markup Language) although a bit old is still widely used in various APIs. It uses tags to encode data hence is a bit hard to read by humans. It was initially designed for documents but is suitable to represent arbitrary data structures.
@@ -238,6 +246,7 @@ vlans:
     type: enet
     vlan_id: '1'
 ```
+Bonus: a [collection](https://noyaml.com/) of YAML shortcomings.
 
 ### JSON
 JSON (JavaScript Object Notation) is a modern data encoding format defined in [RFC 7159](https://tools.ietf.org/html/rfc7159.html) and widely used in web APIs. It's lightweight, human-readable, and is more suited for data models of modern programming languages than XML.
@@ -268,7 +277,7 @@ Here is the sample data from previous sections encoded in JSON:
 	}
 }
 ```
-As you can see it's almost as easy to read as YAML, however native JSON doesn't support comments making it not very suitable for configuration files.
+As you can see it's almost as easy to read as YAML, however, native JSON doesn't support comments making it not very suitable for configuration files.
 
 ### Summary
 Here is a summary table representing the key properties of data formats.
@@ -285,11 +294,29 @@ There are online tools like [this one](https://codebeautify.org/yaml-to-json-xml
 This section is quite opinionated and aims to introduce you to the essential tools leaving behind many others for the sake of brevity. I highly recommend to take a look at the [Awesome Network Automation](https://github.com/networktocode/awesome-network-automation) list later.
 
 ## Python
+Python is a go-to programming language when it comes to network automation. All of the popular network automation tools and libraries are written in Python.
+
+{{< figure src="https://imgs.xkcd.com/comics/python.png" alt="xkcd - Python" caption="Python" attr="xkcd" attrlink="https://xkcd.com/353/">}}
+
+Due to its gentle learning curve and immense popularity (second most used language on GitHub after JavaScript as of the time of writing), Python is a great choice to get started with programming.
+
+Python basics are out of the scope of this guide. I've supplied several online resources that can help with learning Python in the [References and further reading](#references-and-further-reading) section.
+
+To effectively use Python to solve basic network automation problems you will need to learn this set of skills:
+* Setting up Python on your system
+* Using virtual environments and installing packages with Pip
+* Understanding of the basic Python concepts such as:
+  * Variables
+  * Data structures
+  * Functions
+  * Imports
+
+As you can see it's not overwhelming and I encourage you to spend some time on it because it'll make your automation journey so much easier.
 
 ## Ways of interacting with network devices programmatically
 There are two major ways of accessing network devices programmatically: CLI and API.
 ### CLI
-For a long time the only API of network devices was CLI which is designed to be used by humans and not automation scripts. These are the main drawbacks of using CLI as an API:
+For a long time, the only API of network devices was CLI which is designed to be used by humans and not automation scripts. These are the main drawbacks of using CLI as an API:
 * **Inconsistent data output**  
   The same command outputs may differ from one NOS (Network Operating System) version to another.
 * **Unstructured data output**  
@@ -299,7 +326,14 @@ For a long time the only API of network devices was CLI which is designed to be 
 
 Despite more and more networking vendors begin to include API support in their products it's unlikely that you won't have to deal with CLI during your network automation journey.
 
-Fortunately there are a lot of tools and libraries today that make CLI scraping easier. Here is a list of the most prominent ones.
+To parse CLI output [regular expressions](https://en.wikipedia.org/wiki/Regular_expression) are used. Not a very user friendly technology to put it mildly.
+
+>“I don’t know who you are. I don’t know what you want. If you are looking for technical help, I can tell you I don’t have any time. But what I do have are a very particular set of regexes. Regexes I have acquired over a very long career. Regexes that are a nightmare for people like you to debug. If you leave me alone now, that’ll be the end of it. I will not look for you, I will not pursue you, but if you don’t, I will look for you, I will find you and I will use them in your code.”
+>
+><cite>[Quotes from the Cloudiest WebScaliest DevOps Teams](https://daily-devops.tumblr.com/post/155993696387/i-dont-know-who-you-are-i-dont-know-what-you)</cite>
+
+Fortunately, there are a lot of tools and libraries today that make CLI scraping easier by doing a lot of the regex heavy lifting. Here is a list of the most prominent ones.
+
 #### Netmiko  
 [Netmiko](https://github.com/ktbyers/netmiko) is a python library based on [paramiko](http://www.paramiko.org/) and aimed to simplify SSH access to network devices. Created by Kirk Byers in 2014 this python library stays the most popular and widely used tool for managing SSH connections to network devices.
 
@@ -320,6 +354,8 @@ If you are lucky and devices in your network are equipped with API or maybe even
 
 #### RESTful APIs
 [REST](https://en.wikipedia.org/wiki/Representational_state_transfer) stands for Representational State Transfer and defines a set of properties and constraints which an API must conform to in order to be called RESTful.
+
+{{< figure src="images/2020-09-not-restful.jpg" width=400 alt="geek & poke - Insulting made easy" caption="Insulting made easy" attr="geek & poke" attrlink="http://geek-and-poke.com/geekandpoke/2013/6/14/insulting-made-easy">}}
 
 {{< alert message="HTTP-based APIs may be RESTful and non-RESTful. Non-RESTful HTTP-based APIs are left out of scope because they are less common." type="info" badge="Note" >}}
 
@@ -357,6 +393,8 @@ Here is a summary table representing key properties of network API types.
 ## Git
 This section covers basic Git usage and terminology. But first, I'd like to highlight several reasons why you should care about Git and version control in the first place.
 
+{{< figure src="https://imgs.xkcd.com/comics/git.png" alt="xkcd - Git" caption="Git" attr="xkcd" attrlink="https://xkcd.com/1597/">}}
+
 ### Why use Git?
 
 * **Visibility & control**  
@@ -393,9 +431,9 @@ Commit saves staged changes to the local Git repository. It also includes metada
 #### Branch
 When you feel like adding a new feature or want to [refactor](https://en.wikipedia.org/wiki/Code_refactoring) the existing code it's a good idea to create a new branch, do your work there, and then merge it back to the main branch. This gives you confidence that you wouldn't break the existing code. It also allows different developers to work on the same codebase without blocking each other.
 
-Git [branching](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell) is extremely lightweight and allows to create and switch between different branches almost instantaneously.
+Git [branching](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell) is extremely lightweight and allows to create new branches and switch between them almost instantaneously.
 #### Pull (merge) request
-[Pull](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-pull-requests) (GitHub) or [merge](https://docs.gitlab.com/ee/user/project/merge_requests/) (GitLab) request is a feature specific to web-based Git-repository managers that provides a simple way to submit your work to the project. There is a lot of confusion about why it's called a pull request and not a push request as you want to add you changes to the repo. The reasoning behind this naming is simple. When you create a pull request you actually request the project's maintainer to pull your submitted changes to the repository.
+[Pull](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-pull-requests) (GitHub) or [merge](https://docs.gitlab.com/ee/user/project/merge_requests/) (GitLab) request is a feature specific to web-based Git-repository managers that provides a simple way to submit your work to the project. There is a lot of confusion about why it's called a pull request and not a push request as you want to add your changes to the repo. The reasoning behind this naming is simple. When you create a pull request you actually request the project's maintainer to pull your submitted changes to the repository.
 ### Basic usage
 #### Command line
 To start using Git in command line I recommend to take a look a [this](https://rogerdudler.github.io/git-guide/) simple but useful Git guide for the beginners by Roger Dudler.
@@ -406,7 +444,9 @@ Eventually, you will screw something up (e.g. make a commit to the wrong branch)
 To make Git [ignore](https://git-scm.com/docs/gitignore) specific files or even subdirectories you can list them in a special file called `.gitignore`. This is extremely useful when you want to keep your remote repository clean of temporary files or files containing sensitive information (e.g. passwords).
 
 ## Docker and containers
-Linux containers have been around for quite a long time (and [chroot and jail](https://en.wikipedia.org/wiki/Chroot) even longer) but Docker was what made it really popular and accessible.
+Linux containers have been around for quite a long time (and [chroot and jail](https://en.wikipedia.org/wiki/Chroot) even longer) but Docker was what made it popular and accessible.
+
+{{< figure src="https://imgs.xkcd.com/comics/containers.png" alt="xkcd - Containers" caption="Containers" attr="xkcd" attrlink="https://xkcd.com/1988/">}}
 
 Containers allow to run software in an isolated environment, but contrary to VMs each container doesn't need a full-blown OS to run. This makes containers more resource effective in terms of CPU, RAM, and storage not to mention that you don't need to maintain a separate OS for each container as with VMs.
 
@@ -458,44 +498,111 @@ Here is a simple workflow to build and run your own Docker container:
 There are tons of articles on how to write Dockerfiles and use docker-compose. But I guess at first you will use prebuilt images just to get familiar with Docker and you will need to know some basic CLI commands to start, stop. and monitor Docker containers. [Here](https://pagertree.com/2020/01/06/docker-cheat-sheet/) is a good write up on the essential Docker commands you will find useful from the start.
 
 ## Automation tools
-Quick overview and categorization (configuration management, orchestrators)
-You don't necessarily need to know how to code, but it's so much better when you do.
+Here I would like to give you a quick overview of the most popular and easy to get started with network automation tools.
 
 ### NAPALM
-### Ansible (framework)
-* Why so popular for network automation?
-* Project structure: inventory, playbooks, roles
-* Network modules (https://docs.ansible.com/ansible/latest/modules/list_of_network_modules.html)
+As the official documentation states
+>NAPALM (Network Automation and Programmability Abstraction Layer with Multivendor support) is a Python library that implements a set of functions to interact with different network device Operating Systems using a unified API.
+
+#### Supported devices
+As of the time of writing NAPALM supported the following network operating systems:
+
+* Arista EOS
+* Cisco IOS
+* Cisco IOS-XR
+* Cisco NX-OS
+* Juniper JunOS
+
+#### Working with device configuration
+With NAPALM you can push [configuration](https://napalm.readthedocs.io/en/latest/tutorials/first_steps_config.html) and retrieve operational data from  devices. When manipulating device configuration you have two options:
+* **Replace** the entire running configuration with a new one
+* **Merge** the existing running configuration with a new one
+
+Replace and merge operations don't apply at once. Before committing the new configuration you can compare it to the currently running configuration and then either commit or discard it. And even after applying the new config, you have an option to rollback to the previously committed configuration if the network OS supports it. 
+
+#### Validating deployment
+The ability to retrieve operational data from devices brings a powerful NAPALM feature called compliance report or [deployment validation](https://napalm.readthedocs.io/en/latest/validate/index.html). To get a compliance report you need to write a YAML file describing the desired state of the device and tell NAPALM to use it against the device with a `compliance_report` method.
+
+#### Integration with other tools
+Being a Python library NAPALM can be used directly in Python scripts or integrated with Ansible ([napalm-ansible](https://github.com/napalm-automation/napalm-ansible) module), Nornir ([nornir_napalm](https://github.com/nornir-automation/nornir_napalm) plugin) or SaltStack (native support).
+
+### Ansible
+[Ansible](https://en.wikipedia.org/wiki/Ansible_(software)) is a comprehensive automation [framework](https://www.geeksforgeeks.org/software-framework-vs-library/) initially developed to provision Linux servers. Due to its agentless nature, Ansible soon became very popular among network engineers. Contrary to the agent-based systems like [Chef](https://en.wikipedia.org/wiki/Chef_(software)) and [Puppet](https://en.wikipedia.org/wiki/Puppet_(company)), Ansible executes Python code on the target systems to perform its tasks. Therefore it only requires the target system to run SSH and Python. But how does it align with the network devices which cannot execute Python code? To solve this Ansible executes its network modules locally on the [control node](https://docs.ansible.com/ansible/latest/network/getting_started/basic_concepts.html#control-node). 
+
+#### Ansible Galaxy
+To interact with different network platforms Ansible uses plugins grouped in [collections](https://docs.ansible.com/ansible/latest/collections/index.html#list-of-collections). To install these collections you can use [Ansible Galaxy](https://galaxy.ansible.com/search?deprecated=false&tags=networking&keywords=&order_by=-download_count&page=1) which is like [DockerHub](https://hub.docker.com/) or [PyPi](https://pypi.org/) for Ansible, where users can share Ansible [roles](#roles) and plugins.
+
+#### Terminology
+Typical Ansible automation project consists of the following building blocks.
+
+##### Inventory
+Inventory file lists managed network devices, their hostnames or IP addresses, and optionally other variables like access credentials. Ansible can use Netbox as an inventory information source via a [plugin](https://docs.ansible.com/ansible/latest/collections/netbox/netbox/nb_inventory_inventory.html).
+##### Playbooks
+A playbook defines an ordered list of tasks to be performed against managed devices. It also can define which roles should be applied to devices.
+##### Roles
+As the [official documentation](https://docs.ansible.com/ansible/latest/network/getting_started/network_roles.html#understanding-roles) states
+>Ansible roles are basically playbooks broken up into a known file structure.
+
+Roles allow you to group tasks and variables in separate directories. This makes an Ansible project more organized and lets you reuse those roles on different groups of managed hosts more easily.
+
+You can create roles according to different configuration sections: one for routing, another for basic settings such as NTP and DNS servers, etc. etc. Then you can apply those roles to different groups of devices. For example, routing is needed only on the core switches, and basic settings should be applied to all devices.
+
+#### Pros & Cons
+Ansible uses its own [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) based on [YAML](#yaml) to describe its playbooks logic. This design decision can be considered a two-edged sword. It requires minimal learning to solve simple tasks, but when you need to write something more complex it quickly becomes quite cumbersome and hard to debug.
+
+Speed and scalability are other aspects where Ansible doesn't shine in context of network automation. 
+
+In my opinion, Ansible is a great starting point for your network automation journey, as it is easy to learn and gives you a good idea of what modern automation tools are about. As John McGovern from CBT Nuggets [said](https://youtu.be/uQAaA_-lb7k?t=177) "Ansible is like a CCNA for network automation".
+
+Another Ansible advantage is that it can be used as a single automation solution for the whole IT infrastructure.
+
 ### Nornir
-### PyATS & Genie
+Nornir was initially created by David Barroso, author of NAPALM.
+>Nornir is an automation framework written in python to be used with python.
+>
+><cite>Official Nornir [documentation](https://nornir.readthedocs.io/en/latest/index.html)</cite>
 
-## Monitoring
-* SNMP vs Streaming Telemetry
-* Logging
-* State monitoring with PyATS
-* Modern Tools (influxdb, grafana, ELK)
+The last part of the definition is key here. Unlike Ansible, Nornir uses pure Python for describing its tasks (Nornir tasks are essentially Python functions). This makes Nornir far more flexible, [fast](https://networklore.com/ansible-nornir-speed/), and easy to [debug](https://nornir.readthedocs.io/en/latest/howto/ipdb_how_to_use_it_with_nornir.html).
 
-## Testing and modeling tools
-* [Batfish](https://www.batfish.org/)
-
-## Code editors
-* VS Code (for projects)
-* SublimeText (ad-hoc editing)
-https://blog.robenkleene.com/2020/09/21/the-era-of-visual-studio-code/
+{{< alert message="Another aspect of Nornir being purely Python is that when you learn Nornir you also learn Python." type="info" badge="Note" >}}
 
 
-# Vendor resources
-## Cisco DevNet
-## Juniper
-## Arista?
-## Cumulus
+Nornir is a pluggable system and starting with version 3.0 it comes only with the very basic plugins. List of Nornir plugins can be found [here](https://nornir.tech/nornir/plugins/). Plugins are installed with Python's standard package manager [pip](https://pip.pypa.io/en/stable/).
 
-# Who to follow on social media
-* Why it is important
-* Twitter
+Like Ansible, Nornir has a concept of inventory, which also can be written in YAML ([YAMLInventory](https://github.com/nornir-automation/nornir_utils) plugin), where you put host and group variables. You can also use existing Ansible inventory files ([nornir_ansible](https://github.com/carlmontanari/nornir_ansible)) or take your inventory information directly from Netbox with [nornir_netbox](https://github.com/wvandeun/nornir_netbox).
+
+To interact with network devices, Nornir can leverage [NAPALM](#napalm), [netmiko](#netmiko), and [scrapli](#scrapli) libraries via respective plugins.
+
+### Summary
+To sum up the above all three of the described tools have their advantages and use cases. NAPALM as an abstraction layer for device interaction integrates nicely into more comprehensive frameworks such as Ansible and Nornir. Ansible is a good starting point for network automation newcomers and Nornir is a go-to solution when flexibility and speed are required.
+
+## Text editors
+Text editor is a piece of software you will spend most of your time with while automating networks. Here I would like to make overview of the most popular modern text editors (that's why Vim and Emacs are not on the list).
+### VS Code
+Good or bad, but todays text editor market is clearly [dominated](https://blog.robenkleene.com/2020/09/21/the-era-of-visual-studio-code/) by [Visual Studio Code](https://code.visualstudio.com/). It has a great and ever expanding collection of plugins, nice UI, built-in Git support, intelligent code completion, you name it.
+
+VS Code is a free and open-source text editor built on [Electron](https://www.electronjs.org/) and owned by Microsoft. It was initially released in 2015.
+
+### Atom
+[Atom](https://atom.io/) is another highly customizable open-source text editor created by GitHub. Since GitHub was acquired by Microsoft, Atom now is also a Microsoft product.
+
+Atom also is free, open-source, and built on Electron. It was initially released in 2014.
+
+### PyCharm
+[PyCharm](https://www.jetbrains.com/pycharm/) is a full-blown Python IDE by JetBrains. I've heard a lot of praise towards it in context of Python development, but never tried it myself. PyCharm is shipped in two versions: full featured Professional ($89/year subscription license) and less functional but free Community Edition.
+
+PyCharm was initially released in 2010.
+
+### Sublime Text
+[Sublime](https://www.sublimetext.com/) is the oldest text editor on the list. It has some great features to itself like multiline editing and "Go To Anything" command which allows to quickly jump to the specific part of text in any open tab. It also can be extended with plugins, but the package manager is not included by default and you'll have to install it manually first.
+
+Sublime Text is a proprietary paid software written in C++ and initially released in 2008. It has a 30 day trial period. After that you will be kindly reminded from time to time to buy a $80 license. It was initially
+
+### Summary
+If you haven't used any of these text editors and therefore didn't invest any time in learning one or the other I'd recommend you to pick VS Code as the most future-proof and well-rounded solution.
 
 # Conclusion
-I hope this was useful for you to get a grip of what network automation is about. If you decide to learn more I encourage you to start automating something because doing is the best way to learn something. I recommend to start small and look for the low hanging fruits. For example, you can automate information gathering from you network devices (give more detail here) and then when you feel more comfortable begin to configure devices programmatically. There is a great [article](https://blog.networktocode.com/post/netdevops-concepts-mvp) by Brett Lykins on how to start automating your network.
+I hope this was useful for you to get a grip of what network automation is about. If you decide to learn more I encourage you to start automating something because doing is the best way to learn something. I recommend to [start small](https://blog.networktocode.com/post/netdevops-concepts-mvp) and look for the low hanging fruits. For example, you can automate information gathering from you network devices (give more detail here) and then when you feel more comfortable begin to configure devices programmatically.
 
 # References and further reading
 * [Network Programmability and Automation](https://www.oreilly.com/library/view/network-programmability-and/9781491931240/) a book by Jason Edelman, Scott S. Lowe, Matt Oswalt
@@ -505,3 +612,8 @@ I hope this was useful for you to get a grip of what network automation is about
 * [NetDevOps: what does it even mean?](https://cumulusnetworks.com/blog/netdevops-meaning/) by Madison Emery (Cumulus Networks)
 * [Awesome Network Automation](https://github.com/networktocode/awesome-network-automation) &mdash; curated Awesome list about Network Automation
 * [6 Docker Basics You Should Completely Grasp When Getting Started](https://vsupalov.com/6-docker-basics/) by Vladislav Supalov
+* [First Steps With Python](https://realpython.com/python-first-steps/) by Derrick Kearney
+* [Python Cheatsheet](https://www.pythoncheatsheet.org/)
+* [Full Stack Python](https://www.fullstackpython.com/)
+* [Fluent Python](https://www.oreilly.com/library/view/fluent-python/9781491946237/) a book by Luciano Ramalho
+* [Learning Python](https://pynet.twb-tech.com/email-signup.html) a free email Python course by Kirk Byers specifically intended for network engineers
