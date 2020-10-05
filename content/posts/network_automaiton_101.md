@@ -19,8 +19,8 @@ tags:
   - ansible
   - nornir
   - napalm
-date: "2020-10-02"
-draft: true
+date: "2020-10-05"
+draft: false
 toc: false
 maxWidthTitle: "max-w-4xl"
 maxWidthContent: "max-w-4xl"
