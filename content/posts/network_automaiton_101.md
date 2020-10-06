@@ -123,7 +123,7 @@ But what is DevOps? There is no academic definition, but the most common one sta
 
 {{< alert message="If you want to learn more about DevOps I recommend this 👉  [awesome list](https://github.com/AcalephStorage/awesome-devops)." type="info" badge="Note" >}}
 
-DevOps has many aspects to it but I'd like to focus on three key practices which it brings: [Infrastructure as Code](#infrastructure-as-code) [CI/CD](#cicd), and [version control](#version-control).
+DevOps has many aspects to it but I'd like to focus on three key practices which it brings: [Infrastructure as Code](#infrastructure-as-code), [CI/CD](#cicd), and [version control](#version-control).
 
 ## Infrastructure as Code
 According to [Wikipedia](https://en.wikipedia.org/wiki/Infrastructure_as_code), IaC is ...
