@@ -43,11 +43,11 @@ feature: "images/2020-10-Network-Automation-101_feature.png"
   - [Python](#python)
   - [Ways of interacting with network devices programmatically](#ways-of-interacting-with-network-devices-programmatically)
     - [CLI](#cli)
-  - [APIs](#apis)
-    - [RESTful APIs](#restful-apis)
-    - [NETCONF & RESTCONF](#netconf--restconf)
-    - [gRPC & gNMI](#grpc--gnmi)
-    - [Summary](#summary-2)
+    - [APIs](#apis)
+      - [RESTful APIs](#restful-apis)
+      - [NETCONF & RESTCONF](#netconf--restconf)
+      - [gRPC & gNMI](#grpc--gnmi)
+      - [Summary](#summary-2)
   - [Git](#git)
     - [Why use Git?](#why-use-git)
     - [Terminology](#terminology)
@@ -346,10 +346,10 @@ To parse CLI output [regular expressions](https://en.wikipedia.org/wiki/Regular_
 
 Fortunately, there are a lot of tools and libraries today that make [CLI scraping](#connection-management-and-cli-scraping) easier by doing a lot of the [regex heavy lifting](#parsing).
 
-## APIs
+### APIs
 If you are lucky and devices in your network have an API or maybe are even driven by SDN controller this section is for you. Network APIs fall into two major categories: HTTP-based and NETCONF-based.
 
-### RESTful APIs
+#### RESTful APIs
 [REST](https://en.wikipedia.org/wiki/Representational_state_transfer) stands for Representational State Transfer and defines a set of properties and constraints which an API must conform to in order to be called RESTful.
 
 {{< figure src="images/2020-10-not-restful.jpg" width=400 alt="geek & poke - Insulting made easy" caption="Insulting made easy" attr="geek & poke" attrlink="http://geek-and-poke.com/geekandpoke/2013/6/14/insulting-made-easy">}}
@@ -362,7 +362,7 @@ To explore RESTful APIs you can use tools such as [cURL](https://curl.haxx.se/) 
 
 There are several mock REST APIs online which you can use for practice. For example, [kanye.rest](https://kanye.rest/) and [JSONPlaceholder](https://jsonplaceholder.typicode.com/).
 
-### NETCONF & RESTCONF
+#### NETCONF & RESTCONF
 [NETCONF](https://tools.ietf.org/html/rfc6241) is a protocol specifically designed for managing network devices. Unlike REST it uses SSH as transport and is stateful as a result. The other key differences of NETCONF are clear delineation between configurational and operational data and the concept of configuration datastores. NETCONF defines three datastores: running configuration, startup configuration, and candidate configuration. You may be familiar with all three of them in the context of network devices. The candidate configuration concept allows to deliver a configuration change consisting of many commands as one transaction. This means that if only one command in a transaction fails the transaction does not succeed avoiding a situation when the partial configuration is applied.
 
 Exploring NETCONF APIs is not as easy and straightforward as with RESTful APIs. To do so you need to establish an interactive SSH session to a device and send lengthy XML-encoded commands. To access NETCONF APIs programmatically there is a [ncclient](https://github.com/ncclient/ncclient) Python library.
@@ -371,12 +371,12 @@ Exploring NETCONF APIs is not as easy and straightforward as with RESTful APIs. 
 
 When choosing between [NETCONF and RESTCONF](https://www.ipspace.net/kb/CiscoAutomation/070-netconf.html) it's [advised](https://www.claise.be/netconf-versus-restconf-capabilitity-comparisons-for-data-model-driven-management-2/) to use the former for direct interactions with network devices and the latter for interactions with SDN-controllers and/or orchestrators.
 
-### gRPC & gNMI
+#### gRPC & gNMI
 [gNMI](https://tools.ietf.org/html/draft-openconfig-rtgwg-gnmi-spec-01) is a new addition to network management protocols based on Google's [gRPC](https://en.wikipedia.org/wiki/GRPC) and developed by [OpenConfig](https://www.openconfig.net/) working group. It is considered to be a more robust successor of NETCONF and supports [streaming telemetry](https://blogs.cisco.com/developer/getting-started-with-model-driven-telemetry).
 
 Because gNMI is not yet as mature as NETCONF it is not very well supported in Python. Though there are a couple of libraries you can look into: [cisco-gnmi](https://github.com/cisco-ie/cisco-gnmi-python) and [pygnmi](https://github.com/akarneliuk/pygnmi).
 
-### Summary
+#### Summary
 Here is a summary table representing the key properties of network API types.
 
 |                     | REST       | NETCONF  | RESTCONF | gNMI |
