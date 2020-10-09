@@ -655,3 +655,4 @@ To keep up with the ever changing automation landscape I recommend to follow the
 * [Python Cheatsheet](https://www.pythoncheatsheet.org/) &mdash; handy one-page website with examples
 * [Fluent Python](https://www.oreilly.com/library/view/fluent-python/9781491946237/) &mdash; a book by Luciano Ramalho
 * [Learning Python](https://pynet.twb-tech.com/email-signup.html)  &mdash; a free email Python course by Kirk Byers specifically intended for network engineers
+* [Data Structures And Algorithms In Python](https://www.youtube.com/playlist?list=PLeo1K3hjS3uu_n_a__MI_KktGTLYopZ12) &mdash; a video tutorial by Dhaval Patel
