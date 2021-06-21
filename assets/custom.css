@@ -3,9 +3,6 @@
 */
 
 /* Staticman comment section and form */
-#staticman-comments {
-   display: none; 
-}
 .staticman-comments .g-recaptcha {
    padding: 0.5rem 0;
 }

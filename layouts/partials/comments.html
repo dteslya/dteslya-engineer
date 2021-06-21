@@ -2,8 +2,9 @@
 <script type="application/javascript">
     {{ partial "staticman-js-common.js" | safeJS }}
 </script>
+<script type="application/javascript"
+    src="https://www.google.com/recaptcha/api.js?onload=onloadCallbackCaptcha&render=explicit"></script>
 <noscript>Enable JavaScript to view comments.</noscript>
-<button id="staticman-button" onclick="showComments()" class="btn rounded" >Show comments</button>
 <section id="staticman-comments" class="staticman-comments">
     {{ if .Site.Params.staticman }}
     <section class="staticman-comments post-comments">
@@ -47,7 +48,8 @@
         {{ end }}
 
         <form id="comment-form" class="post-new-comment" method="post"
-            action="{{ .Site.Params.staticman.endpoint }}/{{ .Site.Params.staticman.username }}/{{ .Site.Params.staticman.repository }}/{{ .Site.Params.staticman.branch }}/comments">
+            action="{{ .Site.Params.staticman.endpoint }}/{{ .Site.Params.staticman.username }}/{{ .Site.Params.staticman.repository }}/{{ .Site.Params.staticman.branch }}/comments"
+            onsubmit="return checkForm(this);">
             {{ if eq ($.Scratch.Get "hasComments") 0 }}
             <p>Be the first to leave a comment!</p>
             {{ end }}
@@ -55,20 +57,25 @@
             <input type="hidden" name="options[redirect]" value="{{ .Permalink }}#comment-submitted">
             <input type="hidden" name="options[slug]" value="{{ .File.BaseFileName }}">
             {{ if $.Site.Params.staticman.recaptcha }}
-            <input type="hidden" name="options[reCaptcha][siteKey]" value="{{ $.Site.Params.staticman.recaptcha.sitekey }}">
-            <input type="hidden" name="options[reCaptcha][secret]"  value="{{ $.Site.Params.staticman.recaptcha.secret }}">
+            <input type="hidden" name="options[reCaptcha][siteKey]"
+                value="{{ $.Site.Params.staticman.recaptcha.sitekey }}">
+            <input type="hidden" name="options[reCaptcha][secret]"
+                value="{{ $.Site.Params.staticman.recaptcha.secret }}">
             {{ end }}
-            <input type="text" name="fields[name]" class="post-comment-field border appearance-none rounded"
+            <input type="text" name="fields[name]" id="yourname" class="post-comment-field border appearance-none rounded"
                 placeholder="Name *" required />
             <input type="email" name="fields[email]" class="post-comment-field border appearance-none rounded"
                 placeholder="Email address (will not be public) *" required />
             <input type="hidden" id="comment-parent" name="fields[reply_to]" value="">
-            <textarea name="fields[comment]" class="post-comment-field border appearance-none rounded"
+            <textarea name="fields[comment]" id="yourcomment" class="post-comment-field border appearance-none rounded"
                 placeholder="Comment (markdown is accepted) *" required rows="10"></textarea>
             {{ if $.Site.Params.staticman.recaptcha }}
-            <div class="g-recaptcha" id="div-recaptcha" data-sitekey="{{ $.Site.Params.staticman.recaptcha.sitekey }}"></div>
+            <div class="g-recaptcha" id="div-recaptcha" data-sitekey="{{ $.Site.Params.staticman.recaptcha.sitekey }}">
+            </div>
             {{ end }}
-            <input type="submit" class="post-comment-field btn rounded" value="Submit">
+            <output id="warningComment"></output>
+            <button class="post-comment-field btn rounded" id="submitButton">Submit</button>
+            <!-- <input id="submitButton" type="submit" class="post-comment-field btn rounded" value="Submit"> -->
         </form>
     </section>
 
