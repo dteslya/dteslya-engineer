@@ -23,3 +23,7 @@ comments:
     - comment
   transforms: 
     email: md5
+  reCaptcha:
+    enabled: true
+    siteKey: "6LcO2EkbAAAAAP3SBtQ2cAgiGOJZhJ1YJXu7nVRG"
+    secret: "eGjVgq3mY42Yc3PFq+WRyukRBYnDDgybbu2p2ANwZoBVOWYUQFwAQowR9KfXdCcMVoewbAx047zwCweb+UgLcMMvwjCXqHUnAh9Ak2UIzlW4XGRpFo3rV3SIQ/ERWNyRFemIgjAqExRb5JOIcHgYAxz4Xulv7QPo69K6ErtcC7PMrz6dXH0RDbaOSDXsuVIj0+vjq7aqPfruwhdsc8jZEfl5wJ14oAOxZjhXmzFIicmatJvTcD8OYHrhEEtSPThYDjuClKR5tlJr8fsRbjwkwuXAmRXOzNqiZtPUYu1lea6eDaNxV8x7HlyPjIMeMzcgvmZQYz8cRqtM2kOoGLWJVw=="
