@@ -6,6 +6,6 @@ My name is Dmitry Teslya. I'm a network engineer with 10+ years of experience. M
 
 Here I try to write about interesting technical challenges I face in my daily work and I hope you'll find something helpful to take away.
 
-I'm based in Moscow, Russia. In my free time I enjoy gaming and playing electric guitar.
+In March, 2022 I moved to Colombo, Sri Lanka with my family.
 
 If you want to get in touch you can PM me on twitter or facebook.
