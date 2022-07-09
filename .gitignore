@@ -2,3 +2,5 @@
 .DS_Store
 settings.json
 .vscode
+public
+.hugo_build.lock
