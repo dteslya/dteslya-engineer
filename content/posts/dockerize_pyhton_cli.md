@@ -10,7 +10,7 @@ tags:
 - poetry
 - typer
 date: "2022-07-14"
-draft: true
+draft: false
 toc: true
 maxWidthTitle: "max-w-4xl"
 maxWidthContent: "max-w-4xl"
