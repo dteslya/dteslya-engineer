@@ -85,6 +85,15 @@ plugins:
       height: auto
       zoomable: true
       draggable: true
+  - git-committers:
+      repository: dteslya/dteslya-engineer
+      branch: main
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: timeago
+      exclude:
+        - blog/archive/*
+        - blog/category/*
 nav:
   - Blog:
     - blog/index.md
