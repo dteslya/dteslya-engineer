@@ -1,6 +1,37 @@
-./node_modules/*
+# -----------------------------------------------------------------------------
+# Python
+# -----------------------------------------------------------------------------
+
+# Dependencies
+/__pycache__
+/venv
+/.venv
+
+# Build files
+/site
+
+# Distribution files
+/dist
+/mkdocs_material.egg-info
+
+# Caches and logs
+*.log
+__pycache__
+.cache
+
+# -----------------------------------------------------------------------------
+# General
+# -----------------------------------------------------------------------------
+
+# Never ignore .gitkeep files
+!**/.gitkeep
+
+# macOS internals
 .DS_Store
-settings.json
+
+# Temporary files
+TODO
+tmp
+
+# IDEs
 .vscode
-public
-.hugo_build.lock

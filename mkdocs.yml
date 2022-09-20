@@ -1,0 +1,116 @@
+site_name: Dmitry Teslya
+site_url: https://dteslya.engineer
+site_author: Dmitry Teslya
+markdown_extensions:
+  - admonition
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true 
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.details
+theme:
+  name: material
+  icon:
+    logo: fontawesome/solid/laptop-code
+  favicon: ./favicon.ico
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default 
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+  features:
+    # - navigation.sections
+    - navigation.tracking
+    - navigation.indexes
+    - navigation.expand
+    - navigation.tabs
+    - navigation.top
+    - content.tabs.link
+plugins:
+  - redirects:
+      redirect_maps:
+        index.md: blog/index.md
+        dockerize_pyhton_cli.md: blog/posts/dockerize-python-cli.md
+        network_automaiton_101.md: network-automation-101/index.md
+        using_cisco_support_api_with_postman.md: blog/posts/using-cisco-support-api-with-postman.md
+        august-2020-update.md: blog/posts/august-2020-update.md
+        automation/2019-02-25-ansible-openvpn.md: blog/posts/2019-02-25-ansible-openvpn.md
+        automation/2019-02-19-configuring_vms_with_ansible.md: blog/posts/configuring-vms-with-ansible.md
+        automation/2019-01-21-creating_vms_with_terraform.md: blog/posts/creating-vms-with-terraform.md
+        automation/2018-12-20-creating_vm_templates_with_packer.md: blog/posts/creating-vm-templates-with-packer.md
+  - meta
+  - blog:
+      blog_dir: blog
+      archive: true
+  - search
+  # - tags
+  - social
+  - glightbox:
+      touchNavigation: true
+      loop: false
+      effect: zoom
+      width: 100%
+      height: auto
+      zoomable: true
+      draggable: true
+nav:
+  - Blog:
+    - blog/index.md
+  - Network Automation 101:
+    - Intro: network-automation-101/index.md
+    - DevOps: network-automation-101/01-devops/index.md
+    - NetDevOps: network-automation-101/02-netdevops/index.md
+    - Data Models and Encodings: network-automation-101/03-data-models-encodings/index.md
+    - Technologies:
+      - network-automation-101/04-technologies/index.md
+      - network-automation-101/04-technologies/01-python.md
+      - network-automation-101/04-technologies/02-interacting.md
+      - network-automation-101/04-technologies/03-git.md
+      - network-automation-101/04-technologies/04-docker.md
+    - Automation Tools:
+      - network-automation-101/05-automation-tools/index.md
+      - network-automation-101/05-automation-tools/01-connection.md
+      - network-automation-101/05-automation-tools/02-parsing.md
+      - network-automation-101/05-automation-tools/03-configuring.md
+      - network-automation-101/05-automation-tools/04-summary.md
+    - Text Editors: network-automation-101/06-text-editors/index.md
+    - Social Media Resources: network-automation-101/social-media-resources.md
+    - References and Further Reading: network-automation-101/references.md
+  - about.md
+extra:
+  social:
+    - icon: fontawesome/brands/twitter 
+      link: https://twitter.com/grimward
+    - icon: fontawesome/brands/github 
+      link: https://github.com/dteslya
+    - icon: fontawesome/brands/facebook 
+      link: https://facebook.com/dteslya
+    - icon: fontawesome/brands/instagram
+      link: https://instagram.com/dteslya
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/dteslya
+copyright: Copyright &copy; 2018 - 2022 Dmitry Teslya

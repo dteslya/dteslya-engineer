@@ -1,7 +1,0 @@
-disqus_id: 4644701667
-_id: f718676e-e2f5-11ea-8a86-acde48001122
-name: tahar
-email: b9459fdd374d3017de0044ba9404db54
-reply_to: ''
-comment: "Hello,\r\n\r\nThank you for your article, I am trying to buld a template on my vcenter cluster, but my installation keep wainting for IP without going further,  is setting up IP configuration is mandatory or I must have a DHCP server for my templates to be able to creates image builds with packer ? Thank you\r\n\r\n![image](https://uploads.disquscdn.com/images/fe9626df558e6726dcbf849d596e90fbda69157fecfb85bf371cca8fcb579fe7.png)"
-date: "2019-10-08T14:37:11"

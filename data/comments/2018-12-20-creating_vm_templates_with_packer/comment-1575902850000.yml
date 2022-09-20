@@ -1,7 +1,0 @@
-disqus_id: 4718242983
-_id: f7184022-e2f5-11ea-8a86-acde48001122
-name: K S
-email: c7f34fdd42146812293590db0b8ed220
-reply_to: ''
-comment: "<p>Good evening Dmitry.</p><p>Many thanks for an article.</p><p>I have one question - have you ever seen such an error while deploying the template on the VMWare VCentre - using the vpshere-iso plugin?</p><p>vsphere-iso output will be in this color.</p><p>==&gt; vsphere-iso: Creating VM...<br>Build 'vsphere-iso' errored: error creating vm: Invalid configuration for device '1'.</p><p>Thanks<br>Konrad</p>"
-date: "2019-12-09T17:47:30"
