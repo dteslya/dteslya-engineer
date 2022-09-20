@@ -1,3 +1,8 @@
+---
+title:  Network Automation 101
+description: "A comprehensive guide to network automation: where to start, tools, technologies, and approaches"
+---
+
 # Network Automation 101
 
 <figure markdown>
