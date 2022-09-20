@@ -1,6 +1,9 @@
 site_name: Dmitry Teslya
 site_url: https://dteslya.engineer
 site_author: Dmitry Teslya
+repo_url: https://github.com/dteslya/dteslya-engineer
+repo_name: dteslya/dteslya-engineer
+edit_uri: edit/main/docs/
 markdown_extensions:
   - admonition
   - tables
@@ -19,6 +22,7 @@ markdown_extensions:
   - pymdownx.details
 theme:
   name: material
+  custom_dir: overrides
   icon:
     logo: fontawesome/solid/laptop-code
   favicon: ./favicon.ico
@@ -31,7 +35,9 @@ theme:
 
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
-      scheme: default 
+      scheme: default
+      primary: blue grey
+      accent: teal
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
@@ -39,6 +45,8 @@ theme:
     # Palette toggle for dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
+      primary: blue grey
+      accent: teal
       toggle:
         icon: material/brightness-4
         name: Switch to system preference

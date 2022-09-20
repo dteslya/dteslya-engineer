@@ -10,6 +10,7 @@ tags:
 date: 2020-08-14
 authors:
   - dteslya
+comments: true
 ---
 
 # Using Cisco Support API with Postman

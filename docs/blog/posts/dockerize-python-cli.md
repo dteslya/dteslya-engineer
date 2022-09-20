@@ -12,8 +12,7 @@ date: 2022-07-14
 authors:
   - dteslya
 draft: false
-feature: "images/2022-07-python-cli-in-docker.jpg"
-caption: Cover photo by [Diomari Madulara](https://unsplash.com/@diomari)
+comments: true
 ---
 
 # How to Run a Python CLI Tool Inside a Docker Container

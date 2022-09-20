@@ -8,7 +8,7 @@ tags:
 date: 2020-08-11
 authors:
   - dteslya
-feature: "images/2020_aug_update.png"
+comments: true
 ---
 
 # August 2020 Update

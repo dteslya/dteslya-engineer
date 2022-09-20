@@ -11,7 +11,7 @@ date: 2019-02-25
 authors:
   - dteslya
 # url: automation/2019-02-25-ansible-openvpn/
-feature: "images/openvpn_ansible.png"
+comments: true
 ---
 
 # How to Automate OpenVPN Server Deployment and User Management

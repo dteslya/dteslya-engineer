@@ -22,6 +22,7 @@ date: 2020-10-05
 authors:
   - dteslya
 draft: false
+comments: true
 ---
 
 # Network Automation 101

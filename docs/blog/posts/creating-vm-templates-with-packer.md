@@ -15,7 +15,7 @@ authors:
 links:
   - blog/posts/creating-vms-with-terraform.md
   - blog/posts/configuring-vms-with-ansible.md
-# url: automation/2018-12-20-creating_vm_templates_with_packer/
+comments: true
 ---
 
 # Automate Windows VM Creation and Configuration in vSphere Using Packer, Terraform and Ansible (Part 1 of 3)
