@@ -130,4 +130,8 @@ extra:
       link: https://instagram.com/dteslya
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/dteslya
+  analytics:
+    provider: google
+    property: G-PP8LCLJG0S
+
 copyright: Copyright &copy; 2018 - 2022 Dmitry Teslya
