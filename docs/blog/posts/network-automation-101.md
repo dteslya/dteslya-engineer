@@ -27,4 +27,4 @@ comments: true
 
 # Network Automation 101
 
-This blog post moved to a [dedicated section](../network-automation-101) of this site.
+This blog post moved to a [dedicated section](../../network-automation-101/index.md) of this site.
