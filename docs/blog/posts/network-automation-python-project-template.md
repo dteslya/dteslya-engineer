@@ -1,5 +1,5 @@
 ---
-title: Network Automation Python Project Template
+title: Building a Template for a Network Automation Project
 description: "How to create a reusable template to enforce best practices and consistency across your network automation Python projects."
 categories:
 - Tutorial
