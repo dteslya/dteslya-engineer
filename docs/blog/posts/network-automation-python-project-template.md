@@ -10,6 +10,7 @@ tags:
 - templating
 links:
   - blog/posts/dockerize-python-cli.md
+  - blog/posts/2023-05-commitizen.md
 date: 2023-04-24
 authors:
   - dteslya
@@ -179,6 +180,9 @@ The following environment variables are supposed to be set and accessible by you
 
 | Variable | Description |
 | --- | --- |
+| `PROJECT_ACCESS_TOKEN` | Project access token with read-write access to the repository and the ability to push to the main branch |
+| `CI_USERNAME` | Arbitrary git username for the `version-bump` CI job, e.g. ci-bot |
+| `CI_EMAIL` | Email address of the `CI_USERNAME`, e.g. ci-bot@example.com |
 | `DOCKER_REGISTRY_RO_PASSWORD` | Account password with read-only access to the private Docker registry |
 | `DOCKER_REGISTRY_RO_USER` | Account username with read-only access to the private Docker registry |
 | `DOCKER_REGISTRY_RW_PASSWORD` | Account password with read-write access to the private Docker registry |
@@ -191,11 +195,11 @@ Of course, you are free to adjust anything to your needs. Just make sure that th
 
 Now let's generate a project out of this template.
 
-<div id="copier_create_from_template" style="z-index: 1; position: relative; max-width: 100%;"></div>
+<div id="01_copier_create_from_template" style="z-index: 1; position: relative; max-width: 100%;"></div>
 <script>
   window.onload = function(){
-    AsciinemaPlayer.create('/asciinema/copier_create_from_template.cast', document.getElementById('copier_create_from_template'), data={poster: 'npt:0:52'});
-    AsciinemaPlayer.create('/asciinema/copier_run_script.cast', document.getElementById('copier_run_script'), data={poster: 'npt:0:15'});
+    AsciinemaPlayer.create('/asciinema/copier/01_copier_create_from_template.cast', document.getElementById('01_copier_create_from_template'), data={poster: 'npt:0:52'});
+    AsciinemaPlayer.create('/asciinema/copier/02_copier_run_script.cast', document.getElementById('02_copier_run_script'), data={poster: 'npt:0:15'});
 }
 </script>
 
@@ -203,7 +207,7 @@ This created the project directory with all the needed files.
 
 Now we can install the dependencies and check that the `hello_world` function from the included script works.
 
-<div id="copier_run_script" style="z-index: 1; position: relative; max-width: 100%;"></div>
+<div id="02_copier_run_script" style="z-index: 1; position: relative; max-width: 100%;"></div>
 
 !!! warning
     I deliberately included a couple of dummy secrets in `settings.py` file just for the demo to work out of the box. Otherwise, I'd have to define them as environment variables before running the demo. Don't forget to remove them before committing your changes.
