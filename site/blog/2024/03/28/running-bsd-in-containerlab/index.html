@@ -1,0 +1,2269 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="How to run OpenBSD and FreeBSD nodes in containerlab.">
+      
+      
+        <meta name="author" content="Dmitry Teslya">
+      
+      
+        <link rel="canonical" href="https://dteslya.engineer/blog/2024/03/28/running-bsd-in-containerlab/">
+      
+      
+        <link rel="prev" href="../../../../2023/11/16/my-introduction-to-openbsd/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../../favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.15+insiders-4.35.3">
+    
+    
+      
+        <title>Running BSD in containerlab - Dmitry Teslya</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.cac7c1ad.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.ecc776e4.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../css/timeago.css">
+    
+      <link rel="stylesheet" href="../../../../../stylesheets/asciinema-player.css">
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+
+  <script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-PP8LCLJG0S"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-PP8LCLJG0S",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-PP8LCLJG0S",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+  
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Running BSD in containerlab - Dmitry Teslya" />
+<meta property="og:description" content="How to run OpenBSD and FreeBSD nodes in containerlab." />
+<meta property="og:image" content="https://dteslya.engineer/assets/images/social/blog/2024/03/28/running-bsd-in-containerlab.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://dteslya.engineer/blog/2024/03/28/running-bsd-in-containerlab/" />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter.title" content="Running BSD in containerlab - Dmitry Teslya" />
+<meta property="twitter:description" content="How to run OpenBSD and FreeBSD nodes in containerlab." />
+<meta property="twitter:image" content="https://dteslya.engineer/assets/images/social/blog/2024/03/28/running-bsd-in-containerlab.png" />
+ <link href="../../../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+        html.glightbox-open { overflow: initial; height: 100%; }
+        .gslide-title { margin-top: 0px; user-select: text; }
+        .gslide-desc { color: #666; user-select: text; }
+        .gslide-image img { background: white; }
+        
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
+            </style> <script src="../../../../../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#running-bsd-in-containerlab" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../.." title="Dmitry Teslya" class="md-header__button md-logo" aria-label="Dmitry Teslya" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M64 96c0-35.3 28.7-64 64-64h384c35.3 0 64 28.7 64 64v256h-64V96H128v256H64V96zM0 403.2C0 392.6 8.6 384 19.2 384h601.6c10.6 0 19.2 8.6 19.2 19.2 0 42.4-34.4 76.8-76.8 76.8H76.8C34.4 480 0 445.6 0 403.2zM281 209l-31 31 31 31c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-48-48c-9.4-9.4-9.4-24.6 0-33.9l48-48c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9zm112-34 48 48c9.4 9.4 9.4 24.6 0 33.9l-48 48c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l31-31-31-31c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dmitry Teslya
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Running BSD in containerlab
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="teal"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/dteslya/dteslya-engineer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    dteslya/dteslya-engineer
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../" class="md-tabs__link md-tabs__link--active">
+          
+  
+    
+  
+  Blog
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../../network-automation-101/" class="md-tabs__link">
+          
+  
+    
+  
+  Network Automation 101
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../about/" class="md-tabs__link">
+        
+  
+    
+  
+  About
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="Dmitry Teslya" class="md-nav__button md-logo" aria-label="Dmitry Teslya" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M64 96c0-35.3 28.7-64 64-64h384c35.3 0 64 28.7 64 64v256h-64V96H128v256H64V96zM0 403.2C0 392.6 8.6 384 19.2 384h601.6c10.6 0 19.2 8.6 19.2 19.2 0 42.4-34.4 76.8-76.8 76.8H76.8C34.4 480 0 445.6 0 403.2zM281 209l-31 31 31 31c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-48-48c-9.4-9.4-9.4-24.6 0-33.9l48-48c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9zm112-34 48 48c9.4 9.4 9.4 24.6 0 33.9l-48 48c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l31-31-31-31c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z"/></svg>
+
+    </a>
+    Dmitry Teslya
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/dteslya/dteslya-engineer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    dteslya/dteslya-engineer
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    
+  
+    Blog
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              <label class="md-nav__link " for="__nav_1">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Blog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_2" >
+        
+          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    Archive
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Archive
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/2024/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    2024
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/2023/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    2023
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/2022/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    2022
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/2020/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    2020
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/2019/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    2019
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/2018/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    2018
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3" >
+        
+          <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    Categories
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Categories
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/blog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Blog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/misc/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Misc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorial
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../network-automation-101/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    
+  
+    Network Automation 101
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              <label class="md-nav__link " for="__nav_2">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Network Automation 101
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/01-devops/" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 8.877 2.247 5.91l8.405-3.416V.022l7.37 5.393L2.966 8.338v8.225L0 15.707zm24-4.45v14.651l-5.753 4.9-9.303-3.057v3.056l-5.978-7.416 15.057 1.798V5.415z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/02-netdevops/" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h10Z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    NetDevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/03-data-models-encodings/" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M.95 14.184 12 20.403l9.919-5.55v2.21L12 22.662l-10.484-5.96-.565.308v.77L12 24l11.05-6.218v-4.317l-.515-.309L12 19.118l-9.867-5.653v-2.21L12 16.805l11.05-6.218V6.32l-.515-.308L12 11.974 2.647 6.681 12 1.388l7.76 4.368.668-.411v-.566L12 0 .95 6.27v.72L12 13.207l9.919-5.55v2.26L12 15.52 1.516 9.56l-.565.308Z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Models and Encodings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_5" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../network-automation-101/04-technologies/" class="md-nav__link ">
+              
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24v40c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24h40v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24h40v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24h40c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24v-40h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24v-40h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24v-40c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24h-40v-56h40c13.3 0 24-10.7 24-24s-10.7-24-24-24h-40v-56h40c13.3 0 24-10.7 24-24s-10.7-24-24-24h-40c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24v40h-56V24c0-13.3-10.7-24-24-24s-24 10.7-24 24v40h-56V24zm-16 104h192c17.7 0 32 14.3 32 32v192c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160v192h192V160z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Technologies
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              <label class="md-nav__link " for="__nav_2_5">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Technologies
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/04-technologies/01-python/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/04-technologies/02-interacting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Interacting with network devices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/04-technologies/03-git/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Git
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/04-technologies/04-docker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker and containers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_6" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../network-automation-101/05-automation-tools/" class="md-nav__link ">
+              
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.71 20.29-1.42 1.42a1 1 0 0 1-1.41 0L7 9.85A3.81 3.81 0 0 1 6 10a4 4 0 0 1-3.78-5.3l2.54 2.54.53-.53 1.42-1.42.53-.53L4.7 2.22A4 4 0 0 1 10 6a3.81 3.81 0 0 1-.15 1l11.86 11.88a1 1 0 0 1 0 1.41M2.29 18.88a1 1 0 0 0 0 1.41l1.42 1.42a1 1 0 0 0 1.41 0l5.47-5.46-2.83-2.83M20 2l-4 2v2l-2.17 2.17 2 2L18 8h2l2-4Z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Automation Tools
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              <label class="md-nav__link " for="__nav_2_6">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Automation Tools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/05-automation-tools/01-connection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Connection Management and CLI Scraping
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/05-automation-tools/02-parsing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Parsing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/05-automation-tools/03-configuring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuring devices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/05-automation-tools/04-summary/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Summary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/06-text-editors/" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 19.11 12.11 17H7v-2h7v.12L16.12 13H7v-2h10v1.12l1.24-1.23c.48-.48 1.11-.75 1.8-.75.33 0 .66.07.96.19V5a2 2 0 0 0-2-2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h5v-1.89M7 7h10v2H7V7m14.7 7.35-1 1-2.05-2.05 1-1a.55.55 0 0 1 .77 0l1.28 1.28c.21.21.21.56 0 .77M12 19.94l6.06-6.06 2.05 2.05L14.06 22H12v-2.06Z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Text Editors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/social-media-resources/" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 0 1-2.825.775 4.958 4.958 0 0 0 2.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 0 0-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 0 0-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 0 1-2.228-.616v.06a4.923 4.923 0 0 0 3.946 4.827 4.996 4.996 0 0 1-2.212.085 4.936 4.936 0 0 0 4.604 3.417 9.867 9.867 0 0 1-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 0 0 7.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0 0 24 4.59z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Social Media Resources
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../network-automation-101/references/" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1M8 13h8v-2H8v2m9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1 0 1.71-1.39 3.1-3.1 3.1h-4V17h4a5 5 0 0 0 5-5 5 5 0 0 0-5-5Z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    References and Further Reading
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../about/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#enter-containerlab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enter containerlab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-bsd-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building BSD images
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-containerlab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing containerlab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#starting-a-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Starting a lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring nodes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+              <div class="md-post__authors md-typeset">
+                
+                  <div class="md-profile md-post__profile">
+                    <span class="md-author md-author--long">
+                      <img src="https://github.com/dteslya.png" alt="Dmitry Teslya">
+                    </span>
+                    <span class="md-profile__description">
+                      <strong>Dmitry Teslya</strong><br>
+                      Creator
+                    </span>
+                  </div>
+                
+              </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__title">
+                <div class="md-nav__link">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+              </li>
+              <li class="md-nav__item">
+                <div class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"/></svg>
+                  <time datetime="2024-03-28 00:00:00" class="md-ellipsis">March 28, 2024</time>
+                </div>
+              </li>
+              
+                <li class="md-nav__item">
+                  <div class="md-nav__link">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3H9m3 2 4 13 3-1-4-13-3 1M5 5v13h3V5H5M3 19v2h18v-2H3Z"/></svg>
+                    <span class="md-ellipsis">
+                      in
+                      
+                        <a href="../../../../category/tutorial/">Tutorial</a></span>
+                  </div>
+                </li>
+              
+              
+                
+                <li class="md-nav__item">
+                  <div class="md-nav__link">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5Z"/></svg>
+                    <span class="md-ellipsis">
+                      
+                        14 min read
+                      
+                    </span>
+                  </div>
+                </li>
+              
+            </ul>
+            
+          </nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+
+  
+  
+
+
+<h1 id="running-bsd-in-containerlab">Running BSD in containerlab</h1>
+<figure>
+<p><a href="https://unsplash.com/@sieuwert"><img alt="feature" src="../../../../assets/images/2024-03-containerlab.jpg" /></a>
+  </p>
+<figcaption>Cover photo by Sieuwert Otterloo on Unsplash</figcaption>
+</figure>
+<p>A few months ago I started tinkering with OpenBSD and wrote a <a href="../../../../2023/11/16/my-introduction-to-openbsd/">post</a> about it. Now, I'd like to share how to easily run not only OpenBSD but also FreeBSD nodes in a lab environment with <a href="https://en.wikipedia.org/wiki/Infrastructure_as_code">IaC</a> approach.</p>
+<!-- more -->
+
+<h2 id="enter-containerlab">Enter containerlab</h2>
+<p><a href="https://containerlab.dev/">Containerlab</a> is my go-to tool when it comes to networking labs. It allows me to declaratively define lab topologies and run container and VM-based NOSes from different vendors and open-source projects. It's like <code>docker compose</code>, but with the ability to create "wires" between containers. All you need to start a lab is to prepare a <a href="https://containerlab.dev/manual/topo-def-file/">topology definition</a> file in YAML and run <code>containerlab deploy</code>.</p>
+<p>Unfortunately, containerlab didn't support OpenBSD at the time. So at first, I resorted to <a href="https://app.vagrantup.com/twingly/boxes/openbsd-7.3-amd64">Vagrant</a> to spin up multi-node labs on my laptop. It did the trick, but the <a href="https://developer.hashicorp.com/vagrant/docs/multi-machine">Vagrantfiles</a> were huge and hard to navigate. I also couldn't easily port those labs to a more powerful host due to VirtualBox dependency. That's when I decided to try and add OpenBSD support to containerlab myself. I had my doubts about adding a general-purpose OS to containerlab, so I've reached out to <a href="https://twitter.com/ntdvps">Roman Dodin</a>, project maintainer, to confirm if he is comfortable with the idea. To my surprise, he was and also gave me some useful hints regarding the implementation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To run VM-based NOSes containerlab utilizes <a href="https://github.com/hellt/vrnetlab">vrnetlab</a> integration. What it essentially does is start a VM inside a container with <code>qemu</code> and stitch VM interfaces with container interfaces allowing it to connect to other containerlab nodes. More details <a href="https://github.com/hellt/vrnetlab?tab=readme-ov-file#container-native-networking">here</a> and <a href="https://netdevops.me/2021/transparently-redirecting-packetsframes-between-interfaces/">here</a>.</p>
+</div>
+<p>Fast forward one month and a new version of containerlab with <a href="https://github.com/hellt/vrnetlab/pull/151">OpenBSD</a> <a href="https://github.com/srl-labs/containerlab/pull/1762">support</a> has been <a href="https://containerlab.dev/rn/0.49/">released</a>.</p>
+<p>Later, Roman approached me to add <a href="https://containerlab.dev/rn/0.53/">FreeBSD support</a>, and I <a href="https://github.com/hellt/vrnetlab/pull/179">did</a> <a href="https://github.com/srl-labs/containerlab/pull/1953">so</a> with pleasure.</p>
+<h2 id="building-bsd-images">Building BSD images</h2>
+<p>The first thing you need is contanerlab-compatible Docker images with OpenBSD and FreeBSD inside. To build them you need to clone <a href="https://github.com/hellt/vrnetlab"><code>hellt/vrnetlab</code></a> and run <code>make download</code> and <code>make</code> in the corresponding directories.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">OpenBSD</label><label for="__tabbed_1_2">FreeBSD</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="hll">$ git clone https://github.com/hellt/vrnetlab
+</span><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Cloning into &#39;vrnetlab&#39;...
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>remote: Enumerating objects: 4538, done.
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>remote: Counting objects: 100% (1528/1528), done.
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>remote: Compressing objects: 100% (449/449), done.
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>remote: Total 4538 (delta 1203), reused 1255 (delta 1079), pack-reused 3010
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>Receiving objects: 100% (4538/4538), 2.05 MiB | 6.85 MiB/s, done.
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>Resolving deltas: 100% (2772/2772), done.
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="hll">$ cd vrnetlab/openbsd
+</span><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="hll">$ make download
+</span><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>/bin/bash download.sh
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>                                 Dload  Upload   Total   Spent    Left  Speed
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>100  673M  100  673M    0     0  9884k      0  0:01:09  0:01:09 --:--:-- 10.5M
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>Download complete: openbsd-7.3-2023-04-22.qcow2
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="hll">$ make
+</span><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>for IMAGE in openbsd-7.3-2023-04-22.qcow2; do \
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>        echo &quot;Making $IMAGE&quot;; \
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>        make IMAGE=$IMAGE docker-build; \
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>done
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>Making openbsd-7.3-2023-04-22.qcow2
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>make[1]: Entering directory &#39;/tmp/vrnetlab/openbsd&#39;
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>rm -f docker/*.qcow2* docker/*.tgz* docker/*.vmdk* docker/*.iso
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>Building docker image using openbsd-7.3-2023-04-22.qcow2 as vrnetlab/vr-openbsd:7.3
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>cp ../common/* docker/
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>make IMAGE=$IMAGE docker-build-image-copy
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>make[2]: Entering directory &#39;/tmp/vrnetlab/openbsd&#39;
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>cp openbsd-7.3-2023-04-22.qcow2* docker/
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>make[2]: Leaving directory &#39;/tmp/vrnetlab/openbsd&#39;
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>(cd docker; docker build --build-arg http_proxy= --build-arg https_proxy= --build-arg IMAGE=openbsd-7.3-2023-04-22.qcow2 -t vrnetlab/vr-openbsd:7.3 .)
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>[+] Building 12.8s (11/11) FINISHED                                                                                                                                                                                                                                                                                         docker:default
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a> =&gt; [internal] load .dockerignore                                                                                                                                                                                                                                                                                                     0.1s
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a> =&gt; =&gt; transferring context: 2B                                                                                                                                                                                                                                                                                                       0.0s
+<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a> =&gt; [internal] load build definition from Dockerfile                                                                                                                                                                                                                                                                                  0.1s
+<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a> =&gt; =&gt; transferring dockerfile: 635B                                                                                                                                                                                                                                                                                                  0.0s
+<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a> =&gt; [internal] load metadata for docker.io/library/debian:bookworm-slim                                                                                                                                                                                                                                                               3.5s
+<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a> =&gt; [1/6] FROM docker.io/library/debian:bookworm-slim@sha256:ccb33c3ac5b02588fc1d9e4fc09b952e433d0c54d8618d0ee1afadf1f3cf2455                                                                                                                                                                                                         0.0s
+<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a> =&gt; [internal] load build context                                                                                                                                                                                                                                                                                                     3.3s
+<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a> =&gt; =&gt; transferring context: 706.65MB                                                                                                                                                                                                                                                                                                 3.2s
+<a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a> =&gt; CACHED [2/6] RUN apt-get update -qy    &amp;&amp; apt-get upgrade -qy    &amp;&amp; apt-get install -y    bridge-utils    iproute2    python3-ipy    socat    qemu-kvm    tcpdump    ssh    inetutils-ping    dnsutils    iptables    nftables    telnet    cloud-utils    sshpass    &amp;&amp; rm -rf /var/lib/apt/lists/*                              0.0s
+<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a> =&gt; [3/6] COPY openbsd-7.3-2023-04-22.qcow2* /                                                                                                                                                                                                                                                                                        1.5s
+<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a> =&gt; [4/6] COPY *.py /                                                                                                                                                                                                                                                                                                                 0.1s
+<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a> =&gt; [5/6] COPY --chmod=0755 backup.sh /                                                                                                                                                                                                                                                                                               0.1s
+<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a> =&gt; [6/6] RUN qemu-img resize /openbsd-7.3-2023-04-22.qcow2 4G                                                                                                                                                                                                                                                                        1.2s
+<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a> =&gt; exporting to image                                                                                                                                                                                                                                                                                                                2.8s
+<a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a> =&gt; =&gt; exporting layers                                                                                                                                                                                                                                                                                                               2.8s
+<a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a> =&gt; =&gt; writing image sha256:85d70742e8958d56ef186b34c09296f93a4f7c6e63bbe964a0995ec4ab23c6b8                                                                                                                                                                                                                                          0.0s
+<a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a> =&gt; =&gt; naming to docker.io/vrnetlab/vr-openbsd:7.3                                                                                                                                                                                                                                                                                    0.0s
+<a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a>make[1]: Leaving directory &#39;/tmp/vrnetlab/openbsd&#39;
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="hll">$ git clone https://github.com/hellt/vrnetlab
+</span><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Cloning into &#39;vrnetlab&#39;...
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>remote: Enumerating objects: 4538, done.
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>remote: Counting objects: 100% (1528/1528), done.
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>remote: Compressing objects: 100% (449/449), done.
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>remote: Total 4538 (delta 1203), reused 1255 (delta 1079), pack-reused 3010
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>Receiving objects: 100% (4538/4538), 2.05 MiB | 6.85 MiB/s, done.
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>Resolving deltas: 100% (2772/2772), done.
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="hll">$ cd vrnetlab/freebsd
+</span><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="hll">$ make download
+</span><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>/bin/bash download.sh
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>                                 Dload  Upload   Total   Spent    Left  Speed
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>100  704M  100  704M    0     0  9626k      0  0:01:14  0:01:14 --:--:-- 10.1M
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>Download complete: freebsd-13.2-zfs-2023-04-21.qcow2
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="hll">$ make
+</span><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>for IMAGE in freebsd-13.2-zfs-2023-04-21.qcow2; do \
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>        echo &quot;Making $IMAGE&quot;; \
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>        make IMAGE=$IMAGE docker-build; \
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>done
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>Making freebsd-13.2-zfs-2023-04-21.qcow2
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>make[1]: Entering directory &#39;/tmp/vrnetlab/freebsd&#39;
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>rm -f docker/*.qcow2* docker/*.tgz* docker/*.vmdk* docker/*.iso
+<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>Building docker image using freebsd-13.2-zfs-2023-04-21.qcow2 as vrnetlab/vr-freebsd:13.2
+<a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>cp ../common/* docker/
+<a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>make IMAGE=$IMAGE docker-build-image-copy
+<a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>make[2]: Entering directory &#39;/tmp/vrnetlab/freebsd&#39;
+<a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>cp freebsd-13.2-zfs-2023-04-21.qcow2* docker/
+<a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>make[2]: Leaving directory &#39;/tmp/vrnetlab/freebsd&#39;
+<a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>(cd docker; docker build --build-arg http_proxy= --build-arg https_proxy= --build-arg IMAGE=freebsd-13.2-zfs-2023-04-21.qcow2 -t vrnetlab/vr-freebsd:13.2 .)
+<a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>[+] Building 5.4s (11/11) FINISHED                                                                                                                                                                                                                                                                                          docker:default
+<a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a> =&gt; [internal] load build definition from Dockerfile                                                                                                                                                                                                                                                                                  0.0s
+<a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a> =&gt; =&gt; transferring dockerfile: 635B                                                                                                                                                                                                                                                                                                  0.0s
+<a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a> =&gt; [internal] load .dockerignore                                                                                                                                                                                                                                                                                                     0.0s
+<a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a> =&gt; =&gt; transferring context: 2B                                                                                                                                                                                                                                                                                                       0.0s
+<a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a> =&gt; [internal] load metadata for docker.io/library/debian:bookworm-slim                                                                                                                                                                                                                                                               2.0s
+<a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a> =&gt; [1/6] FROM docker.io/library/debian:bookworm-slim@sha256:ccb33c3ac5b02588fc1d9e4fc09b952e433d0c54d8618d0ee1afadf1f3cf2455                                                                                                                                                                                                         0.0s
+<a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a> =&gt; [internal] load build context                                                                                                                                                                                                                                                                                                     3.2s
+<a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a> =&gt; =&gt; transferring context: 738.53MB                                                                                                                                                                                                                                                                                                 3.2s
+<a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a> =&gt; CACHED [2/6] RUN apt-get update -qy    &amp;&amp; apt-get upgrade -qy    &amp;&amp; apt-get install -y    bridge-utils    iproute2    python3-ipy    socat    qemu-kvm    tcpdump    ssh    inetutils-ping    dnsutils    iptables    nftables    telnet    cloud-utils    sshpass    &amp;&amp; rm -rf /var/lib/apt/lists/*                              0.0s
+<a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a> =&gt; CACHED [3/6] COPY freebsd-13.2-zfs-2023-04-21.qcow2* /                                                                                                                                                                                                                                                                            0.0s
+<a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a> =&gt; CACHED [4/6] COPY *.py /                                                                                                                                                                                                                                                                                                          0.0s
+<a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a> =&gt; CACHED [5/6] COPY --chmod=0755 backup.sh /                                                                                                                                                                                                                                                                                        0.0s
+<a id="__codelineno-1-44" name="__codelineno-1-44" href="#__codelineno-1-44"></a> =&gt; CACHED [6/6] RUN qemu-img resize /freebsd-13.2-zfs-2023-04-21.qcow2 4G                                                                                                                                                                                                                                                            0.0s
+<a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a> =&gt; exporting to image                                                                                                                                                                                                                                                                                                                0.0s
+<a id="__codelineno-1-46" name="__codelineno-1-46" href="#__codelineno-1-46"></a> =&gt; =&gt; exporting layers                                                                                                                                                                                                                                                                                                               0.0s
+<a id="__codelineno-1-47" name="__codelineno-1-47" href="#__codelineno-1-47"></a> =&gt; =&gt; writing image sha256:a4adc1501baed2150a7ccca6e03291c630f2e87eeeabcff6dbb5aa3ca9f860b7                                                                                                                                                                                                                                          0.0s
+<a id="__codelineno-1-48" name="__codelineno-1-48" href="#__codelineno-1-48"></a> =&gt; =&gt; naming to docker.io/vrnetlab/vr-freebsd:13.2                                                                                                                                                                                                                                                                                   0.0s
+<a id="__codelineno-1-49" name="__codelineno-1-49" href="#__codelineno-1-49"></a>make[1]: Leaving directory &#39;/tmp/vrnetlab/freebsd&#39;
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>To check if the images are available run:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="hll">$ docker images | grep bsd
+</span><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>vrnetlab/vr-openbsd                                 7.3            85d70742e895   9 minutes ago   2.36GB
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>vrnetlab/vr-freebsd                                 13.2           a4adc1501bae   5 days ago      2.42GB
+</code></pre></div>
+<h2 id="installing-containerlab">Installing containerlab</h2>
+<p>Containerlab is written in Go and comes as a single binary file. The easiest way to install it is by running the official installation script:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="hll">$ bash -c &quot;$(curl -sL https://get.containerlab.dev)&quot;
+</span><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Downloading https://github.com/srl-labs/containerlab/releases/download/v0.53.0/containerlab_0.53.0_linux_amd64.deb
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Preparing to install containerlab 0.53.0 from package
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Selecting previously unselected package containerlab.
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>(Reading database ... 221124 files and directories currently installed.)
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>Preparing to unpack .../containerlab_0.53.0_linux_amd64.deb ...
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>Unpacking containerlab (0.53.0) ...
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>Setting up containerlab (0.53.0) ...
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a> ____ ___  _   _ _____  _    ___ _   _ _____ ____  _       _
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>/ ___/ _ \| \ | |_   _|/ \  |_ _| \ | | ____|  _ \| | __ _| |__
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>| |  | | | |  \| | | | / _ \  | ||  \| |  _| | |_) | |/ _` | &#39;_ \
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>| |__| |_| | |\  | | |/ ___ \ | || |\  | |___|  _ &lt;| | (_| | |_) |
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>\____\___/|_| \_| |_/_/   \_\___|_| \_|_____|_| \_\_|\__,_|_.__/
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>   version: 0.53.0
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>    commit: 7ce0afa2
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>      date: 2024-03-25T16:31:05Z
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>    source: https://github.com/srl-labs/containerlab
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>rel. notes: https://containerlab.dev/rn/0.53/
+</code></pre></div>
+<p>You can read about other options in the <a href="https://containerlab.dev/install/">installation guide</a>.</p>
+<h2 id="starting-a-lab">Starting a lab</h2>
+<p>To start a lab, you first need to create a topology file. Below is the topology I used for this tutorial.</p>
+<div class="highlight"><span class="filename">Lab topology</span><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>              ┌──────────┐            ┌──────────┐        
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>              │obsd1     │            │     fbsd1│        
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>              │          │ 10.1.1.0/30│          │        
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>              │       vio2────────────vtnet2     │        
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>              │          │.1        .2│          │        
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>              │          │            │          │        
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>              └───vio1───┘            └──vtnet1──┘        
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>                   │.1                   .1|
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>                   |                       │              
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>     192.168.1.0/24│                       │192.168.2.0/24
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>                   │                       │              
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>                   │.2                   .2│              
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>              ┌───eth1───┐            ┌───eth1───┐        
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>              │          │            │          │        
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>              │          │            │          │        
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>              │          │            │          │        
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>              │          │            │          │        
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>              │ client1  │            │  client2 │        
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>              └──────────┘            └──────────┘        
+</code></pre></div>
+<p>It's pretty simple. Two BSD nodes are acting as routers for two Linux clients.</p>
+<p>Here is how this topology can be reflected in a topology file.</p>
+<div class="highlight"><span class="filename">bsd.clab.yml</span><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bsd</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nt">topology</span><span class="p">:</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="nt">nodes</span><span class="p">:</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w"> </span><span class="nt">obsd1</span><span class="p">:</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">   </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openbsd</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">   </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vrnetlab/vr-openbsd:7.3</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w"> </span><span class="nt">fbsd1</span><span class="p">:</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">   </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">freebsd</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">   </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vrnetlab/vr-freebsd:13.2</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w"> </span><span class="nt">client1</span><span class="p">:</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">   </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux&quot;</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">   </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wbitt/network-multitool:alpine-extra</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">   </span><span class="nt">exec</span><span class="p">:</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ip addr add 192.168.1.2/24 dev eth1</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ip route add 192.168.2.0/24 via 192.168.1.1</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w"> </span><span class="nt">client2</span><span class="p">:</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">   </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux&quot;</span>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">   </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wbitt/network-multitool:alpine-extra</span>
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">   </span><span class="nt">exec</span><span class="p">:</span>
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ip addr add 192.168.2.2/24 dev eth1</span>
+<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ip route add 192.168.1.0/24 via 192.168.2.1</span>
+<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="nt">links</span><span class="p">:</span>
+<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">endpoints</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;obsd1:eth1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;client1:eth1&quot;</span><span class="p p-Indicator">]</span>
+<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">endpoints</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;fbsd1:eth1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;client2:eth1&quot;</span><span class="p p-Indicator">]</span>
+<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">endpoints</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;obsd1:eth2&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;fbsd1:eth2&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<p>To start the lab create an empty directory (e.g. <code>~/clab-bsd</code>), cd to it, and save the above YAML code to <code>bsd.clab.yml</code> in that directory. After that, you can run <code>sudo containerlab deploy</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="hll">$ sudo containerlab deploy
+</span><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>INFO[0000] Containerlab v0.53.0 started
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>INFO[0000] Parsing &amp; checking topology file: bsd.clab.yml
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>INFO[0000] Creating lab directory: /tmp/clab-bsd/clab-bsd
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>INFO[0000] Creating container: &quot;obsd1&quot;
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>INFO[0000] Creating container: &quot;fbsd1&quot;
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>INFO[0000] Creating container: &quot;client2&quot;
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>INFO[0000] Creating container: &quot;client1&quot;
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>INFO[0001] Created link: fbsd1:eth1 &lt;--&gt; client2:eth1
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>INFO[0001] Created link: obsd1:eth2 &lt;--&gt; fbsd1:eth2
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>INFO[0001] Created link: obsd1:eth1 &lt;--&gt; client1:eth1
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>INFO[0001] Executed command &quot;ip addr add 192.168.2.2/24 dev eth1&quot; on the node &quot;client2&quot;. stdout:
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>INFO[0001] Executed command &quot;ip route add 192.168.1.0/24 via 192.168.2.1&quot; on the node &quot;client2&quot;. stdout:
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>INFO[0001] Executed command &quot;ip addr add 192.168.1.2/24 dev eth1&quot; on the node &quot;client1&quot;. stdout:
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>INFO[0001] Executed command &quot;ip route add 192.168.2.0/24 via 192.168.1.1&quot; on the node &quot;client1&quot;. stdout:
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>INFO[0001] Adding containerlab host entries to /etc/hosts file
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>INFO[0001] Adding ssh config for containerlab nodes
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>+---+------------------+--------------+--------------------------------------+---------+---------+----------------+----------------------+
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>| # |       Name       | Container ID |                Image                 |  Kind   |  State  |  IPv4 Address  |     IPv6 Address     |
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>+---+------------------+--------------+--------------------------------------+---------+---------+----------------+----------------------+
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>| 1 | clab-bsd-client1 | 38258e33b272 | wbitt/network-multitool:alpine-extra | linux   | running | 172.20.20.7/24 | 2001:172:20:20::7/64 |
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>| 2 | clab-bsd-client2 | 61d4e75ce2ae | wbitt/network-multitool:alpine-extra | linux   | running | 172.20.20.5/24 | 2001:172:20:20::5/64 |
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>| 3 | clab-bsd-fbsd1   | 20566a209062 | vrnetlab/vr-freebsd:13.2             | freebsd | running | 172.20.20.6/24 | 2001:172:20:20::6/64 |
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>| 4 | clab-bsd-obsd1   | 391d5b86dfde | vrnetlab/vr-openbsd:7.3              | openbsd | running | 172.20.20.8/24 | 2001:172:20:20::8/64 |
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>+---+------------------+--------------+--------------------------------------+---------+---------+----------------+----------------------+
+</code></pre></div>
+<p>To check if the nodes are running normally you can check their status like this.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="hll">$ docker ps | grep vrnetlab
+</span><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>391d5b86dfde   vrnetlab/vr-openbsd:7.3                &quot;/launch.py --userna…&quot;   11 minutes ago   Up 11 minutes (healthy)   22/tcp, 5000/tcp, 10000-10099/tcp           clab-bsd-obsd1
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>20566a209062   vrnetlab/vr-freebsd:13.2               &quot;/launch.py --userna…&quot;   11 minutes ago   Up 11 minutes (healthy)   22/tcp, 5000/tcp, 10000-10099/tcp           clab-bsd-fbsd1
+</code></pre></div>
+<p>Look for the <code>(healthy)</code> keyword in the output.</p>
+<h2 id="configuring-nodes">Configuring nodes</h2>
+<p>Now when the lab is up you can proceed with the node configuration. Client nodes were already configured at the start (<code>exec</code> lines in the topology file), but the BSD nodes need manual attention.</p>
+<p>To keep things simple I'm going to just add IP addresses to the interfaces, enable IPv4 forwarding, and configure static routing on both BSD nodes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The default user credentials for both BSD nodes: <code>admin:admin</code>.</p>
+</div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">OpenBSD</label><label for="__tabbed_2_2">FreeBSD</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="hll">ssh clab-bsd-obsd1
+</span><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>Warning: Permanently added &#39;clab-bsd-obsd1,172.20.20.8&#39; (ECDSA) to the list of known hosts.
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>admin@clab-bsd-obsd1&#39;s password:
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>OpenBSD 7.3 (GENERIC.MP) #1125: Sat Mar 25 10:36:29 MDT 2023
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>Welcome to OpenBSD: The proactively secure Unix-like operating system.
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>Please use the sendbug(1) utility to report bugs in the system.
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>Before reporting a bug, please try to reproduce it with the latest
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>version of the code.  With bug reports, please try to ensure that
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>enough information to reproduce the problem is enclosed, and if a
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>known fix for it exists, include that as well.
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="hll">obsd1$ sudo ifconfig vio1 192.168.1.1/24
+</span><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="hll">obsd1$ sudo ifconfig vio2 10.1.1.1/30
+</span><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="hll">obsd1$ ping 192.168.1.2
+</span><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>PING 192.168.1.2 (192.168.1.2): 56 data bytes
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>64 bytes from 192.168.1.2: icmp_seq=0 ttl=64 time=3.639 ms
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>^C
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>--- 192.168.1.2 ping statistics ---
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>1 packets transmitted, 1 packets received, 0.0% packet loss
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>round-trip min/avg/max/std-dev = 3.639/3.639/3.639/0.000 ms
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="hll">obsd1$ sudo sysctl net.inet.ip.forwarding=1
+</span><a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a>net.inet.ip.forwarding: 0 -&gt; 1
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="hll">obsd1$ sudo route add 192.168.2.0/24 10.1.1.2
+</span><a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a>add net 192.168.2.0/24: gateway 10.1.1.2
+<a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a>obsd1$
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="hll">ssh clab-bsd-fbsd1
+</span><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>Warning: Permanently added &#39;clab-bsd-fbsd1,172.20.20.6&#39; (ECDSA) to the list of known hosts.
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>Password for admin@fbsd1:
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>FreeBSD 13.2-RELEASE releng/13.2-n254617-525ecfdad597 GENERIC
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>Welcome to FreeBSD!
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>Release Notes, Errata: https://www.FreeBSD.org/releases/
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>Security Advisories:   https://www.FreeBSD.org/security/
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>FreeBSD Handbook:      https://www.FreeBSD.org/handbook/
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>FreeBSD FAQ:           https://www.FreeBSD.org/faq/
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>Questions List:        https://www.FreeBSD.org/lists/questions/
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>FreeBSD Forums:        https://forums.FreeBSD.org/
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>Documents installed with the system are in the /usr/local/share/doc/freebsd/
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>directory, or can be installed later with:  pkg install en-freebsd-doc
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>For other languages, replace &quot;en&quot; with a language code like de or fr.
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>
+<a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>Show the version of FreeBSD installed:  freebsd-version ; uname -a
+<a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>Please include that output and any error messages when posting questions.
+<a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>Introduction to manual pages:  man man
+<a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>FreeBSD directory layout:      man hier
+<a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>
+<a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>To change this login announcement, see motd(5).
+<a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>Ever wonder what those numbers after command names were, as in cat(1)?  It&#39;s
+<a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>the section of the manual the man page is in.  &quot;man man&quot; will tell you more.
+<a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>                -- David Scheidt &lt;dscheidt@tumbolia.com&gt;
+<a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a><span class="hll">admin@fbsd1:~ % sudo ifconfig vtnet1 192.168.2.1/24
+</span><a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a><span class="hll">admin@fbsd1:~ % sudo ifconfig vtnet2 10.1.1.2/30
+</span><a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a><span class="hll">admin@fbsd1:~ % ping 192.168.2.2
+</span><a id="__codelineno-9-31" name="__codelineno-9-31" href="#__codelineno-9-31"></a>PING 192.168.2.2 (192.168.2.2): 56 data bytes
+<a id="__codelineno-9-32" name="__codelineno-9-32" href="#__codelineno-9-32"></a>64 bytes from 192.168.2.2: icmp_seq=0 ttl=64 time=1.328 ms
+<a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a>^C
+<a id="__codelineno-9-34" name="__codelineno-9-34" href="#__codelineno-9-34"></a>--- 192.168.2.2 ping statistics ---
+<a id="__codelineno-9-35" name="__codelineno-9-35" href="#__codelineno-9-35"></a>1 packets transmitted, 1 packets received, 0.0% packet loss
+<a id="__codelineno-9-36" name="__codelineno-9-36" href="#__codelineno-9-36"></a>round-trip min/avg/max/stddev = 1.328/1.328/1.328/0.000 ms
+<a id="__codelineno-9-37" name="__codelineno-9-37" href="#__codelineno-9-37"></a><span class="hll">admin@fbsd1:~ % sudo sysctl net.inet.ip.forwarding=1
+</span><a id="__codelineno-9-38" name="__codelineno-9-38" href="#__codelineno-9-38"></a>net.inet.ip.forwarding: 0 -&gt; 1
+<a id="__codelineno-9-39" name="__codelineno-9-39" href="#__codelineno-9-39"></a><span class="hll">admin@fbsd1:~ % sudo route add 192.168.1.0/24 10.1.1.1
+</span><a id="__codelineno-9-40" name="__codelineno-9-40" href="#__codelineno-9-40"></a>add net 192.168.1.0: gateway 10.1.1.1
+<a id="__codelineno-9-41" name="__codelineno-9-41" href="#__codelineno-9-41"></a><span class="hll">admin@fbsd1:~ % ping 10.1.1.1
+</span><a id="__codelineno-9-42" name="__codelineno-9-42" href="#__codelineno-9-42"></a>PING 10.1.1.1 (10.1.1.1): 56 data bytes
+<a id="__codelineno-9-43" name="__codelineno-9-43" href="#__codelineno-9-43"></a>64 bytes from 10.1.1.1: icmp_seq=0 ttl=255 time=2.481 ms
+<a id="__codelineno-9-44" name="__codelineno-9-44" href="#__codelineno-9-44"></a>^C
+<a id="__codelineno-9-45" name="__codelineno-9-45" href="#__codelineno-9-45"></a>--- 10.1.1.1 ping statistics ---
+<a id="__codelineno-9-46" name="__codelineno-9-46" href="#__codelineno-9-46"></a>1 packets transmitted, 1 packets received, 0.0% packet loss
+<a id="__codelineno-9-47" name="__codelineno-9-47" href="#__codelineno-9-47"></a>round-trip min/avg/max/stddev = 2.481/2.481/2.481/0.000 ms
+<a id="__codelineno-9-48" name="__codelineno-9-48" href="#__codelineno-9-48"></a>admin@fbsd1:~ %
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Now <code>client1</code> should be able to ping <code>client2</code>. Let's check.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">client1</label><label for="__tabbed_3_2">client2</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="hll">$ docker exec -it clab-bsd-client1 ash
+</span><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="hll">/ # ping 192.168.2.2
+</span><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>PING 192.168.2.2 (192.168.2.2) 56(84) bytes of data.
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>64 bytes from 192.168.2.2: icmp_seq=1 ttl=62 time=2.21 ms
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>64 bytes from 192.168.2.2: icmp_seq=2 ttl=62 time=0.475 ms
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>^C
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>--- 192.168.2.2 ping statistics ---
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>rtt min/avg/max/mdev = 0.475/1.343/2.212/0.868 ms
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="hll">/ # traceroute -n 192.168.2.2
+</span><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>traceroute to 192.168.2.2 (192.168.2.2), 30 hops max, 46 byte packets
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a> 1  192.168.1.1  0.788 ms  0.541 ms  0.549 ms
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a> 2  10.1.1.2  1.405 ms  0.304 ms  0.275 ms
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a> 3  192.168.2.2  0.361 ms  0.300 ms  0.313 ms
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>/ #
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="hll">$ docker exec -it clab-bsd-client2 ash
+</span><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="hll">/ # ping 192.168.1.2
+</span><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>PING 192.168.1.2 (192.168.1.2) 56(84) bytes of data.
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>64 bytes from 192.168.1.2: icmp_seq=1 ttl=62 time=2.45 ms
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>64 bytes from 192.168.1.2: icmp_seq=2 ttl=62 time=0.715 ms
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>^C
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>--- 192.168.1.2 ping statistics ---
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>rtt min/avg/max/mdev = 0.715/1.582/2.450/0.867 ms
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="hll">/ # traceroute -n 192.168.1.2
+</span><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>traceroute to 192.168.1.2 (192.168.1.2), 30 hops max, 46 byte packets
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a> 1  192.168.2.1  0.746 ms  0.650 ms  0.220 ms
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a> 2  10.1.1.1  0.447 ms  0.284 ms  0.233 ms
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a> 3  192.168.1.2  0.281 ms  0.290 ms  0.265 ms
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>/ #
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>As you can see from the <code>traceroute</code> output traffic is traversing both BSD nodes.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>In this post, I gave a quick introduction to containerlab and showed how you can use it to build labs with OpenBSD and FreeBSD nodes. I hope you find it useful and wish you happy labbing!</p>
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      <span class="md-source-file__fact">
+        <span class="md-icon" title="Last update">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
+        </span>
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-03-28T06:13:22+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-03-28</span>
+      </span>
+    
+    
+      <span class="md-source-file__fact">
+        <span class="md-icon" title="Created">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3h-2Z"/></svg>
+        </span>
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-03-28T06:13:22+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-03-28</span>
+      </span>
+    
+    
+    
+      <span class="md-source-file__fact">
+        <span class="md-icon" title="Contributors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2Z"/></svg>
+        </span>
+        <span>GitHub</span>
+        <nav>
+          
+            <a href="https://github.com/dteslya" class="md-author" title="@dteslya">
+              
+              <img src="https://avatars.githubusercontent.com/u/45225322?size=72" alt="dteslya">
+            </a>
+          
+          
+          
+        </nav>
+      </span>
+    
+  </aside>
+
+
+  
+
+
+  
+
+
+
+  <h2 id="__comments">Comments</h2>
+  <script src="https://giscus.app/client.js"
+    data-repo="dteslya/dteslya-engineer"
+    data-repo-id="MDEwOlJlcG9zaXRvcnkyODYzMDU0NDM="
+    data-category="General"
+    data-category-id="DIC_kwDOERCso84CRiCZ"
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="bottom"
+    data-theme="preferred_color_scheme"
+    data-lang="en"
+    crossorigin="anonymous"
+    async>
+  </script>
+
+  <!-- Synchronize Giscus theme with palette -->
+  <script>
+    var giscus = document.querySelector("script[src*=giscus]")
+
+    /* Set palette on initial load */
+    var palette = __md_get("__palette")
+    if (palette && typeof palette.color === "object") {
+      var theme = palette.color.scheme === "slate" ? "dark" : "light"
+      giscus.setAttribute("data-theme", theme) 
+    }
+
+    /* Register event handlers after documented loaded */
+    document.addEventListener("DOMContentLoaded", function() {
+      var ref = document.querySelector("[data-md-component=palette]")
+      ref.addEventListener("change", function() {
+        var palette = __md_get("__palette")
+        if (palette && typeof palette.color === "object") {
+          var theme = palette.color.scheme === "slate" ? "dark" : "light"
+
+          /* Instruct Giscus to change theme */
+          var frame = document.querySelector(".giscus-frame")
+          frame.contentWindow.postMessage(
+            { giscus: { setConfig: { theme } } },
+            "https://giscus.app"
+          )
+        }
+      })
+    })
+  </script>
+
+      
+    </article>
+  </div>
+
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2018 - 2024 Dmitry Teslya
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs Insiders
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/grimward" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/dteslya" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://facebook.com/dteslya" target="_blank" rel="noopener" title="facebook.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M504 256C504 119 393 8 256 8S8 119 8 256c0 123.78 90.69 226.38 209.25 245V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.28c-30.8 0-40.41 19.12-40.41 38.73V256h68.78l-11 71.69h-57.78V501C413.31 482.38 504 379.78 504 256z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://instagram.com/dteslya" target="_blank" rel="noopener" title="instagram.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/dteslya" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.tracking", "navigation.indexes", "navigation.expand", "navigation.tabs", "navigation.top", "content.tabs.link", "content.code.annotate"], "search": "../../../../../assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.10c6cd24.min.js"></script>
+      
+        
+          <script src="../../../../../js/timeago.min.js"></script>
+        
+      
+        
+          <script src="../../../../../js/timeago_mkdocs_material.js"></script>
+        
+      
+        
+          <script src="../../../../../javascripts/asciinema-player.min.js"></script>
+        
+      
+    
+  <script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});})</script></body>
+</html>
