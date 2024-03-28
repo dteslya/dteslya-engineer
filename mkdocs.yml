@@ -135,7 +135,7 @@ extra:
     provider: google
     property: G-PP8LCLJG0S
 
-copyright: Copyright &copy; 2018 - 2023 Dmitry Teslya
+copyright: Copyright &copy; 2018 - 2024 Dmitry Teslya
 
 extra_css:
   - stylesheets/asciinema-player.css
