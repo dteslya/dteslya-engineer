@@ -39,7 +39,7 @@ All the scripts and configurations I use in this series of articles are availabl
 * Install Terraform on your workstation by downloading the [binary file](https://www.terraform.io/downloads.html). Put it somewhere on your $PATH. I use `~/bin` for this purpose.
 * Clone my [Github repo](https://github.com/dteslya/win-iac-lab) and `cd` to `terraform`
 * Run `terraform init`. It will download the VMware vSphere provider plugin.
-[![terraform init](/images/2019-01-21-terraform-01.png)](/images/2019-01-21-terraform-01.png)
+[![terraform init](images/2019-01-21-terraform-01.png)](images/2019-01-21-terraform-01.png)
 
 Now everything is ready to proceed with editing the configuration files and running Terraform.
 

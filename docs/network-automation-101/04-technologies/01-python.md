@@ -9,7 +9,7 @@ Python is a go-to programming language when it comes to network automation. All 
 
 Due to its gentle learning curve and immense popularity (second most used language on GitHub after JavaScript as of the time of writing), Python is a great choice to get started with programming.
 
-Python basics are out of the scope of this guide. I've supplied several online resources that can help with learning Python in the [References and further reading](#references-and-further-reading) section.
+Python basics are out of the scope of this guide. I've supplied several online resources that can help with learning Python in the [References and further reading](../references.md#references-and-further-reading) section.
 
 To effectively use Python to solve basic network automation problems you will need to learn this set of skills:
 

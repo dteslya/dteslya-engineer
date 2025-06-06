@@ -58,7 +58,7 @@ You also need to supply `ansible_become_pass` which Ansible “enters” when [s
 To illustrate what I was trying to achieve with OpenVPN I drew this simple network topology. 
 
 <figure markdown>
-  [![topology](images/2019-02-21-openvpn.png)](/images/2019-02-21-openvpn.png)
+  [![topology](images/2019-02-21-openvpn.png)](images/2019-02-21-openvpn.png)
 </figure>
 
 I have an OpenVPN server attached to `10.5.0.0/16` subnet and `172.16.0.0/12` subnet behind the Mikrotik router. Both subnets should be accessible by remote users.

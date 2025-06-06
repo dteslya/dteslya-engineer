@@ -63,7 +63,7 @@ You can create roles according to different configuration sections: one for rout
 
 ### Pros & Cons
 
-Ansible uses its own [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) based on [YAML](#yaml) to describe its playbooks logic. This design decision can be considered a two-edged sword. It requires minimal learning to solve simple tasks, but when you need to write something more complex it quickly becomes quite cumbersome and hard to debug.
+Ansible uses its own [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) based on [YAML](../03-data-models-encodings/index.md#yaml) to describe its playbooks logic. This design decision can be considered a two-edged sword. It requires minimal learning to solve simple tasks, but when you need to write something more complex it quickly becomes quite cumbersome and hard to debug.
 
 Speed and scalability are other aspects where Ansible doesn't shine in the context of network automation. 
 
@@ -87,4 +87,4 @@ Nornir is a pluggable system and starting with version 3.0 it comes only with th
 
 Like Ansible, Nornir has a concept of inventory, which also can be written in YAML ([YAMLInventory](https://github.com/nornir-automation/nornir_utils) plugin), where you put host and group variables. You can also use existing Ansible inventory files ([nornir_ansible](https://github.com/carlmontanari/nornir_ansible)) or take your inventory information directly from Netbox with [nornir_netbox](https://github.com/wvandeun/nornir_netbox).
 
-To interact with network devices, Nornir can leverage [NAPALM](#napalm), [netmiko](#netmiko), and [scrapli](#scrapli) libraries via respective plugins.
+To interact with network devices, Nornir can leverage [NAPALM](#napalm), [netmiko](01-connection.md#netmiko), and [scrapli](01-connection.md#scrapli) libraries via respective plugins.

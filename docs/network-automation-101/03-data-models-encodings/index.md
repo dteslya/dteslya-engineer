@@ -8,7 +8,7 @@ Understanding how data can be structured and encoded is very important in progra
 
 ## YANG & Openconfig
 
-YANG (Yet Another Next Generation) is a data modeling language originally developed for [NETCONF](#netconf--restconf) and defined in [RFC 6020](https://tools.ietf.org/html/rfc6020) and then updated in [RFC 7950](https://tools.ietf.org/html/rfc7950). YANG and NETCONF can be considered as successors to [SMIng](https://tools.ietf.org/html/rfc3780) and [SNMP](https://en.wikipedia.org/wiki/Simple_Network_Management_Protocol) respectively. 
+YANG (Yet Another Next Generation) is a data modeling language originally developed for [NETCONF](../04-technologies/02-interacting.md#netconf-restconf) and defined in [RFC 6020](https://tools.ietf.org/html/rfc6020) and then updated in [RFC 7950](https://tools.ietf.org/html/rfc7950). YANG and NETCONF can be considered as successors to [SMIng](https://tools.ietf.org/html/rfc3780) and [SNMP](https://en.wikipedia.org/wiki/Simple_Network_Management_Protocol) respectively. 
 
 >YANG provides a format-independent way to describe a data model that can be represented in XML or JSON.
 >

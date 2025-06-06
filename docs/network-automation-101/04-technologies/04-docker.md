@@ -51,7 +51,7 @@ To familiarize yourself with Docker you need to know the basic terminology and t
 
 ### Dockerfiles
 
-  [Dockerfile]((https://docs.docker.com/engine/reference/builder/)) is a text file with a set of instructions on how to build an image. It consists of the commands specifying such things as what another image should be used as a base image, what files to copy into the image, what packets to install, and so on.
+  [Dockerfile](https://docs.docker.com/engine/reference/builder/) is a text file with a set of instructions on how to build an image. It consists of the commands specifying such things as what another image should be used as a base image, what files to copy into the image, what packets to install, and so on.
 
 ### Docker Compose
 

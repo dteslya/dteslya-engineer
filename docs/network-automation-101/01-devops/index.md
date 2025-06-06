@@ -1,5 +1,5 @@
 ---
-icon: simple/azuredevops
+icon: material/microsoft-azure-devops
 ---
 
 # DevOps
@@ -27,7 +27,7 @@ DevOps has many aspects to it but I'd like to focus on three key practices which
 According to [Wikipedia](https://en.wikipedia.org/wiki/Infrastructure_as_code), IaC is ...
 >... the process of managing and provisioning computer data centers through machine-readable definition files, rather than physical hardware configuration or interactive configuration tools.
 
-What this really means is that you have a bunch of text files where you define the desired state of your infrastructure: number of VMs, their properties, virtual networks, IP addresses etc. etc. Then these files are processed by IaC tool or framework ([Terraform](https://www.terraform.io/), [SaltStack](https://www.saltstack.com/), [Ansible](#ansible) are just a few examples) which translates that declared state into actual API calls and configuration files and applies it to the infrastructure in order to bring it to the desired state. This gives you a level of abstraction since you focus only on the resulting state and not on how to achieve it. Here I should mention one of the key features of the IaC approach which is [idempotence](https://en.wikipedia.org/wiki/Idempotence). This feature allows you to run an IaC tool repeatedly and if something is already in the desired state it won't touch it. For example, if you declare that a certain VLAN should be configured on a switch and it is already there when you run an IaC tool against that switch it won't try to configure anything.
+What this really means is that you have a bunch of text files where you define the desired state of your infrastructure: number of VMs, their properties, virtual networks, IP addresses etc. etc. Then these files are processed by IaC tool or framework ([Terraform](https://www.terraform.io/), [SaltStack](https://www.saltstack.com/), [Ansible](../05-automation-tools/03-configuring.md#ansible) are just a few examples) which translates that declared state into actual API calls and configuration files and applies it to the infrastructure in order to bring it to the desired state. This gives you a level of abstraction since you focus only on the resulting state and not on how to achieve it. Here I should mention one of the key features of the IaC approach which is [idempotence](https://en.wikipedia.org/wiki/Idempotence). This feature allows you to run an IaC tool repeatedly and if something is already in the desired state it won't touch it. For example, if you declare that a certain VLAN should be configured on a switch and it is already there when you run an IaC tool against that switch it won't try to configure anything.
 
 Treating your infrastructure as text files enables you to apply the same tools and practices to infrastructure as one would apply to any other software project. CI/CD and version control are the main examples here.
 
@@ -45,15 +45,15 @@ CI/CD stands for Continuous Integration / Continuous Delivery or Deployment. Let
 
 A version control system is a foundation for any automation project. It tracks changes in your project files (source code), logs who made those changes, and enables CI/CD workflows.
 
-Today [Git](#git) is the de facto standard in version control systems. Essentially Git is just a command-line tool (though very powerful) that manages project versioning by creating and manipulating metadata kept in a separate hidden directory in the project's [working directory](https://en.wikipedia.org/wiki/Working_directory). But all the magic comes with web-based source control systems such as [GitHub](https://github.com/) or [GitLab](https://about.gitlab.com/) among others.
+Today [Git](../04-technologies/03-git.md#git) is the de facto standard in version control systems. Essentially Git is just a command-line tool (though very powerful) that manages project versioning by creating and manipulating metadata kept in a separate hidden directory in the project's [working directory](https://en.wikipedia.org/wiki/Working_directory). But all the magic comes with web-based source control systems such as [GitHub](https://github.com/) or [GitLab](https://about.gitlab.com/) among others.
 
 !!! note ""
     Many people confuse Git and GitHub because the latter became a [generic term](https://en.wikipedia.org/wiki/Generic_trademark) for version control systems.
 
 Let's suppose you are on a team of developers working on a project hosted on GitHub. Your typical [workflow](https://guides.github.com/introduction/flow/)  will go like this:
 
-* You want to make changes to the source code. It may be a bug fix or a new feature. You create a new branch from the main one and start making [commits](#commit). This doesn't affect the main branch in any way.
-* When the work seems to be done it's time to create a [pull request](#pull-merge-request). PR is a way to tell other developers (project maintainers) that you want to merge your branch with the main one. PR creation can trigger CI tests if they are configured. After all CI tests pass successfully the code is reviewed by other team members. If CI tests fail or something needs to be improved the PR will be rejected. Then you can fix your code in the same branch and create another PR.
+* You want to make changes to the source code. It may be a bug fix or a new feature. You create a new branch from the main one and start making [commits](../04-technologies/03-git.md#commit). This doesn't affect the main branch in any way.
+* When the work seems to be done it's time to create a [pull request](../04-technologies/03-git.md#pull-merge-request). PR is a way to tell other developers (project maintainers) that you want to merge your branch with the main one. PR creation can trigger CI tests if they are configured. After all CI tests pass successfully the code is reviewed by other team members. If CI tests fail or something needs to be improved the PR will be rejected. Then you can fix your code in the same branch and create another PR.
 
     !!! note ""
         Usually, PR's are never merged automatically and someone needs to make the final decision.

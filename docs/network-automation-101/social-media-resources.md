@@ -1,5 +1,5 @@
 ---
-icon: simple/twitter
+icon: material/twitter
 ---
 
 # Social Media Resources

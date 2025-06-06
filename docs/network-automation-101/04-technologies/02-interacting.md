@@ -20,7 +20,7 @@ To parse CLI output [regular expressions](https://en.wikipedia.org/wiki/Regular_
 >
 >[Quotes from the Cloudiest WebScaliest DevOps Teams](https://daily-devops.tumblr.com/post/155993696387/i-dont-know-who-you-are-i-dont-know-what-you)
 
-Fortunately, there are a lot of tools and libraries today that make [CLI scraping](#connection-management-and-cli-scraping) easier by doing a lot of the [regex heavy lifting](#parsing).
+Fortunately, there are a lot of tools and libraries today that make [CLI scraping](../05-automation-tools/01-connection.md#connection-management-and-cli-scraping) easier by doing a lot of the [regex heavy lifting](../05-automation-tools/02-parsing.md#parsing).
 
 ## APIs
 
