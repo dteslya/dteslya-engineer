@@ -1,3 +1,4 @@
+---
 site_name: Dmitry Teslya
 site_url: https://dteslya.engineer
 site_author: Dmitry Teslya
@@ -15,10 +16,10 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.superfences
   - pymdownx.tabbed:
-      alternate_style: true 
+      alternate_style: true
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.details
 theme:
   name: material
@@ -59,6 +60,7 @@ theme:
     - navigation.top
     - content.tabs.link
     - content.code.annotate
+    - content.code.copy
 plugins:
   - redirects:
       redirect_maps:
@@ -75,6 +77,7 @@ plugins:
   - blog:
       blog_dir: blog
       archive: true
+      authors: false
   - search
   # - tags
   - social
@@ -97,35 +100,35 @@ plugins:
         - blog/category/*
 nav:
   - Blog:
-    - blog/index.md
+      - blog/index.md
   - Network Automation 101:
-    - Intro: network-automation-101/index.md
-    - DevOps: network-automation-101/01-devops/index.md
-    - NetDevOps: network-automation-101/02-netdevops/index.md
-    - Data Models and Encodings: network-automation-101/03-data-models-encodings/index.md
-    - Technologies:
-      - network-automation-101/04-technologies/index.md
-      - network-automation-101/04-technologies/01-python.md
-      - network-automation-101/04-technologies/02-interacting.md
-      - network-automation-101/04-technologies/03-git.md
-      - network-automation-101/04-technologies/04-docker.md
-    - Automation Tools:
-      - network-automation-101/05-automation-tools/index.md
-      - network-automation-101/05-automation-tools/01-connection.md
-      - network-automation-101/05-automation-tools/02-parsing.md
-      - network-automation-101/05-automation-tools/03-configuring.md
-      - network-automation-101/05-automation-tools/04-summary.md
-    - Text Editors: network-automation-101/06-text-editors/index.md
-    - Social Media Resources: network-automation-101/social-media-resources.md
-    - References and Further Reading: network-automation-101/references.md
+      - Intro: network-automation-101/index.md
+      - DevOps: network-automation-101/01-devops/index.md
+      - NetDevOps: network-automation-101/02-netdevops/index.md
+      - Data Models and Encodings: network-automation-101/03-data-models-encodings/index.md
+      - Technologies:
+          - network-automation-101/04-technologies/index.md
+          - network-automation-101/04-technologies/01-python.md
+          - network-automation-101/04-technologies/02-interacting.md
+          - network-automation-101/04-technologies/03-git.md
+          - network-automation-101/04-technologies/04-docker.md
+      - Automation Tools:
+          - network-automation-101/05-automation-tools/index.md
+          - network-automation-101/05-automation-tools/01-connection.md
+          - network-automation-101/05-automation-tools/02-parsing.md
+          - network-automation-101/05-automation-tools/03-configuring.md
+          - network-automation-101/05-automation-tools/04-summary.md
+      - Text Editors: network-automation-101/06-text-editors/index.md
+      - Social Media Resources: network-automation-101/social-media-resources.md
+      - References and Further Reading: network-automation-101/references.md
   - about.md
 extra:
   social:
-    - icon: fontawesome/brands/twitter 
+    - icon: fontawesome/brands/twitter
       link: https://twitter.com/grimward
-    - icon: fontawesome/brands/github 
+    - icon: fontawesome/brands/github
       link: https://github.com/dteslya
-    - icon: fontawesome/brands/facebook 
+    - icon: fontawesome/brands/facebook
       link: https://facebook.com/dteslya
     - icon: fontawesome/brands/instagram
       link: https://instagram.com/dteslya

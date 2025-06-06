@@ -32,3 +32,4 @@ tmp
 
 # IDEs
 .vscode
+.env
